@@ -11,10 +11,8 @@ router.get('/', function(req, res, next) {
    res.redirect('/tt/100');
 }),
 router.post('/:page', function(req, res, next) {
-  console.log("posted: ", JSON.stringify(req.body));
   let page = req.body.page;
   let subpage = req.body.subpage;
-  console.log("Posted page: ", page, "-",subpage);
   if (subpage !== "" && subpage > 0) {
     page = page + "-" + subpage;  
   }
@@ -45,13 +43,8 @@ function formTTBody(ttpage) {
     return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
   } ;
   let buttonList = links.reduce(buttonListBuilder, "");
-  console.log("ButtList: ", buttonList);
   var re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re,"");
-  console.log('-----------------------------------------------------------------------');
-  console.log(str.replace(re,""));
-  console.log('-----------------------------------------------------------------------');
-  //res.send(response.body);
   var ref = /(\n)+/g
   str = str.replace(ref,"<br>");
   str = '<html><header> \
