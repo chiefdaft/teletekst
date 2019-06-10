@@ -21,14 +21,14 @@ router.post('/:page', function(req, res, next) {
 router.get('/:page', function(req, res, next) {
   let page = req.params.page;
   //console.log("User-agent = ", req.headers['user-agent']);
-  let userAgent = req.headers['user-agent'];
+  //let userAgent = req.headers['user-agent'];
   (async () => {
     try {
       const response = await got('https://teletekst-data.nos.nl/json/'+ page);
       
       //=> '<!doctype html> ...'
       let ttpage = response.body;
-      let html = formTTBody(ttpage,userAgent);
+      let html = formTTBody(ttpage);
       res.send(html)
     } catch (error) {
       console.log(error.response.body);
@@ -37,7 +37,7 @@ router.get('/:page', function(req, res, next) {
   })();
 //accumulator + currentValue;
 
-function formTTBody(ttpage,userAgent) {
+function formTTBody(ttpage) {
   let str = striptags(JSON.parse(ttpage).content);
   let links = JSON.parse(ttpage).fastTextLinks;
   const buttonListBuilder = (accumulator, currentValue) => {
@@ -49,7 +49,8 @@ function formTTBody(ttpage,userAgent) {
   let ref = /(\n)+/g
   str = str.replace(ref,"<br>");
   str = '<html><header> \
-         ' + style(userAgent) + '\
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
+         ' + style() + '\
           </header><body><div><p> \
           ' + str + '\
           </p></div>\
@@ -73,15 +74,8 @@ function pageForm() {
   </form>'
   return form;
 }
-function style(userAgent) {
+function style() {
   let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
-  if  (!!userAgent.match(/iPad/)) {
-   style = '<link rel="stylesheet" href="/stylesheets/style.android.css">';
-  } else {
-    if (!!userAgent.match(/Android/)) {
-      style = '<link rel="stylesheet" href="/stylesheets/style.android.css">';
-    }
-  }
   return style;  
 }
 module.exports = router;

@@ -12,7 +12,7 @@ h1 {
 div { 
   background-color: black;
   width: 320px;
-  border: 15px solid blue;
+  border: 10px solid blue;
   padding: 10px;
   margin: 20px;
 }
@@ -20,13 +20,13 @@ div.buttonbox {
   width: 76px;
   position: fixed;
   top: 0; 
-  left: 380px; 
+  left: 376px; 
 } 
 div.navigationbox { 
   width: 76px;
   position: fixed;
-  top: 141px;
-  left: 380px; 
+  top: 146px;
+  left: 376px; 
 } 
 p { 
   color: yellow; 
