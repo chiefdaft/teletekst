@@ -1,0 +1,67 @@
+body { 
+  padding: 0px;
+  font: 28px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: darkblue; 
+} 
+
+h1 { 
+  color: white; 
+  text-align: center; 
+} 
+
+div { 
+  background-color: black;
+  width: 640px;
+  border: 2px solid darkblue;
+  padding: 20px;
+  margin: 20px;
+}
+div.buttonbox { 
+  width: 152px;
+  position: fixed;
+  top: 0; 
+  left: 712px; 
+} 
+div.navigationbox { 
+  width: 152px;
+  position: fixed;
+  top: 224px;
+  left: 712px; 
+} 
+p { 
+  color: yellow; 
+  margin: 1px; border: none; padding: 0px;
+  font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 26px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 26px; 
+} 
+p:empty {
+    height: 0.5; 
+    background:6 #ff0000;
+} 
+label {
+  background-color: black;
+  width: 120px;
+  color: Orange; 
+  margin: 1px; border: none; padding: 0px;
+  font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 26px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 32px; 
+}
+button {
+  font: 26px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.page-input {
+  width: 152px;
+  background: Gray;
+  color: White;
+  border: 1px;
+  padding: 1px;
+  font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 26px; font-style: italic bold; font-variant: normal; font-weight: 400; line-height: 28px; 
+}
+.page-submit {
+  width: 152px;
+  font: 26px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.select-page-form {
+  margin: auto;
+}
+.navbutton {
+  width: 152px;
+}

@@ -20,14 +20,15 @@ router.post('/:page', function(req, res, next) {
 }),
 router.get('/:page', function(req, res, next) {
   let page = req.params.page;
-
+  //console.log("User-agent = ", req.headers['user-agent']);
+  let userAgent = req.headers['user-agent'];
   (async () => {
     try {
       const response = await got('https://teletekst-data.nos.nl/json/'+ page);
       
       //=> '<!doctype html> ...'
       let ttpage = response.body;
-      var html = formTTBody(ttpage);
+      let html = formTTBody(ttpage,userAgent);
       res.send(html)
     } catch (error) {
       console.log(error.response.body);
@@ -36,19 +37,19 @@ router.get('/:page', function(req, res, next) {
   })();
 //accumulator + currentValue;
 
-function formTTBody(ttpage) {
+function formTTBody(ttpage,userAgent) {
   let str = striptags(JSON.parse(ttpage).content);
   let links = JSON.parse(ttpage).fastTextLinks;
   const buttonListBuilder = (accumulator, currentValue) => {
     return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
   } ;
   let buttonList = links.reduce(buttonListBuilder, "");
-  var re =  /(\&#xF\d\d.;)+/g;
+  let re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re,"");
-  var ref = /(\n)+/g
+  let ref = /(\n)+/g
   str = str.replace(ref,"<br>");
   str = '<html><header> \
-         ' + style() + '\
+         ' + style(userAgent) + '\
           </header><body><div><p> \
           ' + str + '\
           </p></div>\
@@ -72,8 +73,15 @@ function pageForm() {
   </form>'
   return form;
 }
-function style() {
+function style(userAgent) {
   let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+  if  (!!userAgent.match(/iPad/)) {
+   style = '<link rel="stylesheet" href="/stylesheets/style.android.css">';
+  } else {
+    if (!!userAgent.match(/Android/)) {
+      style = '<link rel="stylesheet" href="/stylesheets/style.android.css">';
+    }
+  }
   return style;  
 }
 module.exports = router;
