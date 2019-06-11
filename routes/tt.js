@@ -19,7 +19,7 @@ router.post('/:page', function(req, res, next) {
    res.redirect('/tt/'+page);
 }),
 router.get('/:page', function(req, res, next) {
-  let page = req.params.page;
+  const page = req.params.page;
   //console.log("User-agent = ", req.headers['user-agent']);
   //let userAgent = req.headers['user-agent'];
   (async () => {
@@ -40,13 +40,56 @@ router.get('/:page', function(req, res, next) {
 function formTTBody(ttpage) {
   let str = striptags(JSON.parse(ttpage).content);
   let links = JSON.parse(ttpage).fastTextLinks;
+  
+  let newstr = "";
+  let l = str.length;
+  let n = 0;let np = 0; let ns = 0;
+  let m = 0;//let found = "none"; // can be none, subpage or page
+  let rx = /([-,\ ])([1-9]\d\d)([ \n,-])/g;
+  let rxs= /([,\ ])([1-9]\d\d\/[1-9])([ \n,])/g;
+  while (m>-1 && m<=l && l>0 && n>-1) {
+    np = str.substring(m,l).search(rx);
+    ns = str.substring(m,l).search(rxs);
+    // the search found single page first
+    if ((np>=0 && ns>=0 && np<ns) || (np>=0 && ns==-1) ) {
+      n=np;
+     // found = "page";
+      let link = str.substr(n+m+1,3);
+      newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + link + '</a>';
+      m = m+n+3;
+    } else {
+      // the search found page with subpage first
+      if ((ns>=0 && np>=0 && ns<np) || (ns>=0 && np==-1)) {
+        n=ns;
+      //  found = "subpage";
+        let plink = str.substr(n+m+1,3);
+        let slink = str.substr(n+m+5,1);
+        let link = plink + '-' + slink;
+        newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + plink + '/' + slink + '</a>';
+        m = m+n+5;
+      } else {
+          // inconclusive? Cannot be subpage and page
+          n=-1;
+       //   found = "none";
+          newstr = newstr + str.substr(m+1,l);
+      }
+    }
+    // if (n>=0) {
+    //   let link = str.substr(n+m+1,3);
+    //   newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + link + '</a>';
+    //   m = m+n+3;j++;
+    // } else {
+    //   newstr = newstr + str.substr(m+1,l);
+    // }
+  }
+  str = newstr;
   const buttonListBuilder = (accumulator, currentValue) => {
     return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
   } ;
   let buttonList = links.reduce(buttonListBuilder, "");
   let re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re,"");
-  let ref = /(\n)+/g
+  let ref = /(\n)+/g;
   str = str.replace(ref,"<br>");
   str = '<html><header> \
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> \

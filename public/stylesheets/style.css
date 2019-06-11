@@ -1,7 +1,7 @@
 body { 
   padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: darkblue; 
+  background-color: whitesmoke; 
 } 
 
 h1 { 
@@ -10,9 +10,9 @@ h1 {
 } 
 
 div { 
-  background-color: black;
+  background-color: rgb(48, 50, 82);
   width: 320px;
-  border: 10px solid blue;
+  border: 10px solid rgb(141, 156, 154);
   padding: 10px;
   margin: 20px;
 }
@@ -25,7 +25,7 @@ div.buttonbox {
 div.navigationbox { 
   width: 76px;
   position: fixed;
-  top: 146px;
+  top: 151px;
   left: 376px; 
 } 
 p { 
@@ -37,10 +37,18 @@ p:empty {
     height: 0.5; 
     background: #ff0000;
 } 
+a:link {
+  color: yellow; 
+  text-decoration: none;
+}
+a:visited {
+  color: yellow; 
+  text-decoration: none;
+}
 label {
-  background-color: black;
+  background-color: rgb(48, 50, 82);
   width: 60px;
-  color: Orange; 
+  color: white; 
   margin: 1px; border: none; padding: 0px;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 16px; 
 }
