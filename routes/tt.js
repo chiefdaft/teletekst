@@ -32,6 +32,7 @@ router.get('/:page', function(req, res, next) {
       res.send(html)
     } catch (error) {
       console.log(error.response.body);
+      res.render('error', { title: 'Express Teletekst Error' });
       //=> 'Internal server error ...'
     }
   })();
@@ -74,26 +75,31 @@ function formTTBody(ttpage) {
           newstr = newstr + str.substr(m+1,l);
       }
     }
-    // if (n>=0) {
-    //   let link = str.substr(n+m+1,3);
-    //   newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + link + '</a>';
-    //   m = m+n+3;j++;
-    // } else {
-    //   newstr = newstr + str.substr(m+1,l);
-    // }
   }
   str = newstr;
+
+  
+  // Build a button box fith fast references to pages
   const buttonListBuilder = (accumulator, currentValue) => {
     return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
-  } ;
+  };
   let buttonList = links.reduce(buttonListBuilder, "");
   let re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re,"");
+
+  // Build/replace fast reference bottom line page titles in de page with links to to the pages
+  const fastRefLineBuilder = (accumulator, currentValue) => {
+    return  accumulator.replace(" "+ currentValue.title + " ", '<a href=\"/tt/' + currentValue.page + '\"> ' + currentValue.title + ' </a> ' );
+  };
+  str = links.reduce(fastRefLineBuilder,str);
+  
+  // replace newlines with <br>
   let ref = /(\n)+/g;
   str = str.replace(ref,"<br>");
   str = '<html><header> \
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
          ' + style() + '\
+         <title>Minimalist Teletekst Display</title\
           </header><body><div><p> \
           ' + str + '\
           </p></div>\

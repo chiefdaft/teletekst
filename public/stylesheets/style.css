@@ -38,7 +38,7 @@ p:empty {
     background: #ff0000;
 } 
 a:link {
-  color: yellow; 
+  color: rgb(255, 255, 137); 
   text-decoration: none;
 }
 a:visited {
