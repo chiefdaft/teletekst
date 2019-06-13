@@ -28,17 +28,17 @@ router.get('/:page', function(req, res, next) {
       
       //=> '<!doctype html> ...'
       let ttpage = response.body;
-      let html = formTTBody(ttpage);
+      let html = formTTBody(ttpage,page);
       res.send(html)
     } catch (error) {
       console.log(error.response.body);
-      res.render('error', { title: 'Express Teletekst Error' });
+      res.render('pagenotfound');
       //=> 'Internal server error ...'
     }
   })();
 //accumulator + currentValue;
 
-function formTTBody(ttpage) {
+function formTTBody(ttpage,page) {
   let str = striptags(JSON.parse(ttpage).content);
   let links = JSON.parse(ttpage).fastTextLinks;
   
@@ -104,7 +104,7 @@ function formTTBody(ttpage) {
           ' + str + '\
           </p></div>\
               <div class=\"buttonbox\"> \
-              ' + pageForm() + '\
+              ' + pageForm(page) + '\
               </div>\
               <div class=\"navigationbox\"> \
                 ' + buttonList + '\
@@ -113,15 +113,22 @@ function formTTBody(ttpage) {
       return str;
     }
 });
-function pageForm() {
+function pageForm(page) {
   let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
   <label>Pagina</label>\
-  <input class="page-input" type="number" name="page" id="pagenumber">\
+  <input class="page-input" type="number" name="page" id="pagenumber" value="' + page.substr(0,3) + '">\
   <label>SubPag.</label>\
-  <input class="page-input" type="number" name="subpage" id="subpagenumber">\
+  <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page) + '">\
   <input class="page-submit" type="submit" value="Ga">\
   </form>'
   return form;
+}
+function getSubPage (page)
+{ let subpage = 1;
+  if (page.length == 5) {
+    subpage = page.substr(4,1);
+  }
+  return subpage;
 }
 function style() {
   let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
