@@ -89,7 +89,7 @@ function formTTBody(ttpage,page) {
 
   // Build/replace fast reference bottom line page titles in de page with links to to the pages
   const fastRefLineBuilder = (accumulator, currentValue) => {
-    return  accumulator.replace(" "+ currentValue.title + " ", '<a href=\"/tt/' + currentValue.page + '\"> ' + currentValue.title + ' </a> ' );
+    return  accumulator.replace(currentValue.title, '<a href=\"/tt/' + currentValue.page + '\">' + currentValue.title + '</a>' );
   };
   str = links.reduce(fastRefLineBuilder,str);
   
@@ -109,7 +109,7 @@ function formTTBody(ttpage,page) {
               <div class=\"navigationbox\"> \
                 ' + buttonList + '\
               </div>\
-          </body></html>';
+          </body></html>';  
       return str;
     }
 });
