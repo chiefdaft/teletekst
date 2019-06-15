@@ -98,6 +98,8 @@ function formTTBody(ttpage,page,userAgent) {
   // replace newlines with <br>
   let ref = /(\n)+/g;
   str = str.replace(ref,"<br>");
+  // replace whitespaces by no-breaking whitespace
+  str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
   str = '<html><header> \
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
          ' + style(userAgent) + '\
