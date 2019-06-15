@@ -21,14 +21,15 @@ router.post('/:page', function(req, res, next) {
 router.get('/:page', function(req, res, next) {
   const page = req.params.page;
   //console.log("User-agent = ", req.headers['user-agent']);
-  //let userAgent = req.headers['user-agent'];
+  let userAgent = req.headers['user-agent'];
+
   (async () => {
     try {
       const response = await got('https://teletekst-data.nos.nl/json/'+ page);
       
       //=> '<!doctype html> ...'
       let ttpage = response.body;
-      let html = formTTBody(ttpage,page);
+      let html = formTTBody(ttpage,page,userAgent);
       res.send(html)
     } catch (error) {
       console.log(error.response.body);
@@ -36,9 +37,10 @@ router.get('/:page', function(req, res, next) {
       //=> 'Internal server error ...'
     }
   })();
-//accumulator + currentValue;
+});
+module.exports = router;
 
-function formTTBody(ttpage,page) {
+function formTTBody(ttpage,page,userAgent) {
   let str = striptags(JSON.parse(ttpage).content);
   let links = JSON.parse(ttpage).fastTextLinks;
   
@@ -98,7 +100,7 @@ function formTTBody(ttpage,page) {
   str = str.replace(ref,"<br>");
   str = '<html><header> \
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
-         ' + style() + '\
+         ' + style(userAgent) + '\
          <title>Minimalist Teletekst Display</title\
           </header><body><div><p> \
           ' + str + '\
@@ -112,7 +114,7 @@ function formTTBody(ttpage,page) {
           </body></html>';  
       return str;
     }
-});
+//});
 function pageForm(page) {
   let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
   <label>Pagina</label>\
@@ -130,8 +132,13 @@ function getSubPage (page)
   }
   return subpage;
 }
-function style() {
-  let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+function style(userAgent) {
+// device detection
+console.log("UserAgent=",userAgent);
+let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
+  style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
+}
   return style;  
 }
-module.exports = router;
+//module.exports = router;
