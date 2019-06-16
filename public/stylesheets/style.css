@@ -4,9 +4,15 @@ body {
   background-color: whitesmoke;
 
 } 
+.spanboxes {
+  margin: 0 auto;
+  position: fixed;
+  top: 9px;
+  left: 10px;
+}
 .center-div
 {
-     margin: 0 auto;
+     margin:  auto;
      width: 100px; 
 }
 h1 { 
@@ -14,6 +20,8 @@ h1 {
   text-align: center; 
 } 
 pre { 
+  position: fixed;
+  left: 128px;
   text-indent: 0px;
   background-color: rgb(48, 50, 82);
   width: 332px;
@@ -30,21 +38,23 @@ div {
 }
 div.buttonbox { 
   width: 76px;
-  position: fixed;
+  position: relative;
   top: 10px; 
-  left: 394px;
+ /* left: 394px;*/
 } 
 div.navigationbox { 
   width: 76px;
-  position: fixed;
-  top: 144px;
-  left: 394px; 
+  position: relative;
+  border-bottom: 5px;
+  
+  /*top: 144px;
+  left: 394px; */
 } 
 div.navigationbox2 { 
   width: 76px;
-  position: fixed;
-  top: 280px;
-  left: 394px; 
+  position: relative;
+  /*top: 280px;
+  left: 394px; */
 } 
 p { 
   color: yellow; 
@@ -72,6 +82,7 @@ label {
 }
 button {
   font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
+  text-transform: capitalize;
 }
 .page-input {
   width: 76px;

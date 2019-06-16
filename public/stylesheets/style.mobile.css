@@ -35,6 +35,8 @@ div.buttonbox {
 } 
 div.navigationbox { 
   width: 332px;
+  border-top: 5px;
+  border-bottom: 5px;
   position: relative;
   /*top: 370px;
   left: 8px; */
@@ -46,6 +48,7 @@ div.navigationbox2 {
   /*top: 370px;
   left: 8px; */
   text-align: center;
+  
 } 
 p { 
   color: yellow; 
@@ -74,6 +77,8 @@ label {
 }
 button {
   font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
+  height: 24px;
+  text-transform: capitalize;
 }
 .page-input {
   width: 56px;

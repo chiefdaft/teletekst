@@ -110,7 +110,7 @@ function formTTBody(ttpage,page,userAgent) {
           </header><body><pre><p> \
           ' + str + '\
           </p></pre>\
-          <span><div class=\"buttonbox\"> \
+          <span class=\"spanboxes\"><div class=\"buttonbox\"> \
               ' + pageForm(page) + '\
               </div>\
               <div class=\"navigationbox\"> \
