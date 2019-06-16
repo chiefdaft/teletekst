@@ -48,10 +48,10 @@ function formTTBody(ttpage,page,userAgent) {
   let l = str.length;
   let n = 0;let np = 0; let ns = 0;
   let m = 0;//let found = "none"; // can be none, subpage or page
-  let rx = /([-,\ ])([1-9]\d\d)([ \n,-])/g;
+  let rxp = /([-,\ ])([1-9]\d\d)([ \n,-])/g;
   let rxs= /([,\ ])([1-9]\d\d\/[1-9])([ \n,])/g;
   while (m>-1 && m<=l && l>0 && n>-1) {
-    np = str.substring(m,l).search(rx);
+    np = str.substring(m,l).search(rxp);
     ns = str.substring(m,l).search(rxs);
     // the search found single page first
     if ((np>=0 && ns>=0 && np<ns) || (np>=0 && ns==-1) ) {
@@ -81,13 +81,16 @@ function formTTBody(ttpage,page,userAgent) {
   str = newstr;
 
   
-  // Build a button box fith fast references to pages
+  // Build a button box with fast references to pages
   const buttonListBuilder = (accumulator, currentValue) => {
     return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
   };
   let buttonList = links.reduce(buttonListBuilder, "");
+  // remove some gibberish colored ascii lines
   let re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re,"");
+  // shorten the first line a few spaces
+  str = str.slice(11,str.length);
 
   // Build/replace fast reference bottom line page titles in de page with links to to the pages
   const fastRefLineBuilder = (accumulator, currentValue) => {
@@ -99,20 +102,24 @@ function formTTBody(ttpage,page,userAgent) {
   let ref = /(\n)+/g;
   str = str.replace(ref,"<br>");
   // replace whitespaces by no-breaking whitespace
-  str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
+  // str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
   str = '<html><header> \
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
          ' + style(userAgent) + '\
          <title>Minimalist Teletekst Display</title\
-          </header><body><div><p> \
+          </header><body><pre><p> \
           ' + str + '\
-          </p></div>\
-              <div class=\"buttonbox\"> \
+          </p></pre>\
+          <span><div class=\"buttonbox\"> \
               ' + pageForm(page) + '\
               </div>\
               <div class=\"navigationbox\"> \
                 ' + buttonList + '\
-              </div>\
+                </div>\
+                <div class=\"navigationbox2\"> \
+                ' + pageNavButtons(ttpage) + '\
+                </div> \
+              </span> \
           </body></html>';  
       return str;
     }
@@ -135,12 +142,25 @@ function getSubPage (page)
   return subpage;
 }
 function style(userAgent) {
-// device detection
-console.log("UserAgent=",userAgent);
-let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
-if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
-  style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
-}
+  // device detection
+  console.log("UserAgent=",userAgent);
+  let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+  if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
+    style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
+  }
   return style;  
+}
+function pageNavButtons(ttpage) {
+  let pagelinks = [];
+  
+  pagelinks.push({"page": JSON.parse(ttpage).nextPage, "title": "PgUp"});
+  pagelinks.push({"page": JSON.parse(ttpage).nextSubPage, "title": "SubPgUp"});
+  pagelinks.push({"page": JSON.parse(ttpage).prevSubPage, "title": "SubPgDn"});
+  pagelinks.push({"page": JSON.parse(ttpage).prevPage, "title": "PgDn" });
+  console.log(JSON.stringify(pagelinks[3]));
+  const buttonList2Builder = (accumulator, currentValue) => {
+    return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
+  };
+  return pagelinks.reduce(buttonList2Builder, "") ;
 }
 //module.exports = router;
