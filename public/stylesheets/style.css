@@ -35,26 +35,28 @@ div {
   border: 10px solid rgb(141, 156, 154);
   padding: 10px;
   margin: auto;
+
 }
 div.buttonbox { 
   width: 96px;
   position: relative;
   top: 0px; 
  /* left: 394px;*/
+
 } 
 div.navigationbox { 
   width: 96px;
   position: relative;
-  border-bottom: 5px;
-  
   /*top: 144px;
   left: 394px; */
+
 } 
 div.navigationbox2 { 
   width: 96px;
   position: relative;
   /*top: 280px;
   left: 394px; */
+
 } 
 p { 
   color: yellow; 
