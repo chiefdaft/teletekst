@@ -2,73 +2,26 @@ var express = require('express');
 var router = express.Router();
 
 var striptags = require('striptags');
-
 const got = require('got');
 
-/* GET teletekst page. */
-router.get('/', function(req, res, next) {
-    let page = 100;
-    //res.send({"page": 100});
-    console.log("Page=", page);
-    (async () => {
-      try {
-        const response = await got('https://teletekst-data.nos.nl/json/' + page);
-        res.send(response.body);
-      } catch (error) {
-        console.log(error.response.body);
-      
-        res.send({"error": "1", "pagetxt" : "pagenotfound"});
-        
-        //=> 'Internal server error ...'
-      }
-    })();
-}),
+const getprovider = require('./getproviderandpagefrompost');
+const getproviderpage = require('./getproviderttpage');
+
+router.use('/',getprovider, getproviderpage);
+
 router.post('/', function(req, res, next) {
-  //console.log(JSON.stringify(req.body));
-  console.log(JSON.stringify(req.body));
-  let page = 101; let subpage =0;
-  if (typeof req.query.page !== "undefined") {
-    page = req.query.page;
-    console.log("Query Page=",page)
-    subpage = req.query.subpage;
-  } else {
-    if (typeof req.body.page !== "undefined") {
-      page = req.body.page;
-      console.log("Body Page=",page)
-      subpage = req.body.subpage;
-    } 
-  }
-  if (subpage !== "" && subpage > 0) {
-    page = page + "-" + subpage;  
-  }
-  
-  (async () => {
     try {
-      const response = await got('https://teletekst-data.nos.nl/json/' + page);
-      let links = JSON.parse(response.body,page).fastTextLinks;
-      let pageTxt = cleanUpTTBody(response.body,page);
-      pageJson = { 
-        "prevPage": JSON.parse(response.body).prevPage,
-        "nextPage": JSON.parse(response.body).nextPage,
-        "prevSubPage": JSON.parse(response.body).prevSubPage,
-        "nextSubPage": JSON.parse(response.body).nextSubPage,
-        "fastTextLinks": links,
-        "pagetxt": pageTxt
-      }
-      res.send(pageJson)
+      let pageJson = req.body.textpageobject;
+      pageJson["pagetxt"] = replaceDiacriticals(pageJson.pagetxt);
+      res.send(pageJson);
     } catch (error) {
       console.log(error.response.body);
-    
       res.send({"error": "1", "pagetxt" : "pagenotfound"});
-      
-      //=> 'Internal server error ...'
     }
-  })();
 });
 module.exports = router;
 
-function cleanUpTTBody(ttpage) {
-  let str = striptags(JSON.parse(ttpage).content);
+function replaceDiacriticals(str) {
   let re =  /(\&#xF\d\d.;)+/g;
   str = str.replace(re," ");
   
@@ -164,11 +117,4 @@ function cleanUpTTBody(ttpage) {
   str = diacriticals.reduce(diacriticalRemover, str);
  // str =newstr;
   return str;
-}
-function getSubPage (page)
-{ let subpage = 1;
-  if (page.length == 5) {
-    subpage = page.substr(4,1);
-  }
-  return subpage;
 }

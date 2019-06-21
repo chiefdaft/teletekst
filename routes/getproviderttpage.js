@@ -1,0 +1,87 @@
+// script to retrieve a raw teletext page and format into a 
+// standard formatted JSON with teletekst content and simple navigation
+// links. These can be used for buttons to navigate to different
+// pages.
+const got = require('got');
+const striptags = require('striptags');
+const pageNotFound = "           E R R O R \n\
+" + "           ---------\n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+" + "    +-------------------------+ \n\
+" + "    +-------------------------+ \n\
+" + "           Pagina xxxxx  \n\
+" + "         is niet gevonden! \n\
+" + "    +-------------------------+ \n\
+" + "    +-------------------------+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ \n\
+ " + "  nieuws   weer   sport   voetbal ";
+
+function cleanUpNOSTTBody(ttpage) {
+  let str = striptags(JSON.parse(ttpage).content);
+  let re =  /(\&#xF\d\d.;)+/g;
+  str = str.replace(re," ");
+  return str;
+}
+
+function pageJsonNOSBuilder ( ttpage ) {
+    pageJson = { 
+        "prevPage": JSON.parse(ttpage).prevPage,
+        "nextPage": JSON.parse(ttpage).nextPage,
+        "prevSubPage": JSON.parse(ttpage).prevSubPage,
+        "nextSubPage": JSON.parse(ttpage).nextSubPage,
+        "fastTextLinks": JSON.parse(ttpage).fastTextLinks,
+        "pagetxt": cleanUpNOSTTBody(ttpage)
+    };
+    //console.log(JSON.stringify(pageJson));
+	return pageJson;
+}
+
+const makeRequestFromNOS = async (page) => {
+	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+}
+const makeRequestFromRijnmond = async (page) => {
+	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+}
+const makeRequest = async (provider, page) => {
+    if (provider == 0 || provider == "0") { 
+        return await makeRequestFromNOS(page).then(response => pageJsonNOSBuilder(response.body)
+        , error => { 
+                if (error.statusCode == 404) {
+                    pageJson = { 
+                        "prevPage": "100",
+                        "nextPage": "101",
+                        "prevSubPage": "1",
+                        "nextSubPage": "1",
+                        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
+                        "pagetxt": pageNotFound.replace("xxxxx", page)
+                    };
+                    return pageJson;
+                } else {
+                    console.log(error.statusCode);
+                    res.status(500);
+                }
+         }
+        );
+    };
+    if (provider == 1 || provider == "1") {
+        return await makeRequestFromRijnmond(page).then(response => pageJsonNOSBuilder(response.body));
+    };
+};
+module.exports = function (req, res, next) {
+    makeRequest(req.body.provider, req.body.page).then(response => {
+        req.body["textpageobject"] = response;
+        return next();
+    });
+}
