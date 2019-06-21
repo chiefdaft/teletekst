@@ -10,14 +10,8 @@ module.exports = function(req, res)  {
 };
 
 function formatTTPage(ttpage, page, provider, userAgent) {
-    //let str = striptags(JSON.parse(ttpage).content);
     let str = ttpage.pagetxt;
-    //ttpage,page,userAgent
-    //let userAgent = "Android";
-    //page = req.body.page;
-    //ttpage = req.body.textpageobject;
     let links = ttpage.fastTextLinks;
-    //console.log("Links:",JSON.stringify(links));
     let newstr = "";
     let l = str.length;
     let n = 0;let np = 0; let ns = 0;
@@ -62,11 +56,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
       return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
     };
     let buttonList = links.reduce(buttonListBuilder, "");
-    // remove some gibberish colored ascii lines
-    let re =  /(\&#xF\d\d.;)+/g;
-    str = str.replace(re,"");
-    // shorten the first line a few spaces
-    str = str.slice(11,str.length);
+       
   
     // Build/replace fast reference bottom line page titles in de page with links to to the pages
     const fastRefLineBuilder = (accumulator, currentValue) => {
@@ -74,6 +64,9 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     };
     str = links.reduce(fastRefLineBuilder,str);
     //console.log("hopsa: ", str);
+    // repair <pre> indentation of teh firstline
+    str = str.replace('\n', '</p>\n<p>');
+    //str = '<p class="firstline">' + str;
     // replace newlines with <br>
     let ref = /(\n)+/g;
     str = str.replace(ref,"<br>");
@@ -83,7 +76,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
            ' + style(userAgent) + '\
            <title>Minimalist Teletekst Display</title\
-            </header><body><span><pre><p> \
+            </header><body><span><pre><p class="firstline">&nbsp \
             ' + str + '\
             </p></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \

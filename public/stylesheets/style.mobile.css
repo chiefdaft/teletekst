@@ -1,7 +1,14 @@
-  body { 
+:root {
+  --main-box-bg-color: rgb(48, 50, 82); 
+  --main-box-border-color: rgb(141, 156, 154);
+  --main-text-color: yellow;
+  --body-bg-color: whitesmoke;
+}
+
+body { 
   padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: whitesmoke; 
+  background-color: var(--body-bg-color); 
 } 
 .center-div
 {
@@ -14,15 +21,15 @@ h1 {
 } 
 pre { 
   text-indent: 0px;
-  background-color: rgb(48, 50, 82);
+  background-color: var(--main-box-bg-color);
   width: 374px;
-  border: 10px solid rgb(141, 156, 154);
+  border: 10px solid var(--main-box-border-color);
   /*padding: 10px;  */
 }
 div { 
-  background-color: rgb(48, 50, 82);
+  background-color: var(--main-box-bg-color);
   width: 374px;
-  border: 10px solid rgb(141, 156, 154);
+  border: 10px solid var(--main-box-border-color);
   padding: 1px;
   /*margin: 14px;*/
 }
@@ -51,24 +58,27 @@ div.navigationbox2 {
   
 } 
 p { 
-  color: yellow; 
+  color: var(--main-text-color); 
   margin: 4px; border: none; padding: 0px;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 15px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15px; 
 } 
 p:empty {
     height: 0.5; 
     background: #ff0000;
-} 
+}
+p.firstline {
+  white-space: pre-line;
+}
 a:link {
   color: rgb(255, 255, 137); 
   text-decoration: none;
 }
 a:visited {
-  color: yellow; 
+  color: var(--main-text-color); 
   text-decoration: none;
 }
 label {
-  background-color: rgb(48, 50, 82);
+  background-color: var(--main-box-bg-color);
   width: 68px;
   color: white; 
   margin: 1px; border: none; 

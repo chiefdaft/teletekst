@@ -4,6 +4,24 @@
 // pages.
 const got = require('got');
 const striptags = require('striptags');
+const errorPage = err => {
+    { 
+        if (error.statusCode == 404) {
+            pageJson = { 
+                "prevPage": "100",
+                "nextPage": "101",
+                "prevSubPage": "1",
+                "nextSubPage": "1",
+                "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
+                "pagetxt": pageNotFound.replace("xxxxx", page)
+            };
+            return pageJson;
+        } else {
+            console.log(err.statusCode);
+            //res.status(500);
+        }
+    }
+}
 const pageNotFound = "           E R R O R \n\
 " + "           ---------\n\
  \n\
@@ -35,7 +53,7 @@ function cleanUpNOSTTBody(ttpage) {
   return str;
 }
 
-function pageJsonNOSBuilder ( ttpage ) {
+function pageJsonNOSBuilder (ttpage) {
     pageJson = { 
         "prevPage": JSON.parse(ttpage).prevPage,
         "nextPage": JSON.parse(ttpage).nextPage,
@@ -47,12 +65,29 @@ function pageJsonNOSBuilder ( ttpage ) {
     //console.log(JSON.stringify(pageJson));
 	return pageJson;
 }
-
+function cleanUpRijnmondTTBody(ttpage) {
+    let str = striptags(ttpage, ['pre']);
+    let p1 = str.indexOf("<PRE>") + 5;
+    let p2 = str.indexOf("</PRE>");
+    str = str.substring(p1,p2);
+    return str;
+  }
+function pageJsonRijnmondBuilder(ttpage) {
+    pageJson = { 
+        "prevPage": "100",
+        "nextPage": "100",
+        "prevSubPage": "1",
+        "nextSubPage": "1",
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"120"},{"title":"verkeer","page":"180"}],
+        "pagetxt": cleanUpRijnmondTTBody(ttpage)
+    };
+  return pageJson;
+  }
 const makeRequestFromNOS = async (page) => {
 	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
 }
 const makeRequestFromRijnmond = async (page) => {
-	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+	return await got('?pagina=' + page + '&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
 }
 const makeRequest = async (provider, page) => {
     if (provider == 0 || provider == "0") { 
@@ -70,13 +105,13 @@ const makeRequest = async (provider, page) => {
                     return pageJson;
                 } else {
                     console.log(error.statusCode);
-                    res.status(500);
+                    //res.status(500);
                 }
          }
         );
     };
     if (provider == 1 || provider == "1") {
-        return await makeRequestFromRijnmond(page).then(response => pageJsonNOSBuilder(response.body));
+        return await makeRequestFromRijnmond(page).then(response => pageJsonRijnmondBuilder(response.body), errorPage);
     };
 };
 module.exports = function (req, res, next) {
