@@ -1,7 +1,7 @@
 module.exports = function(req, res, next) {
-	console.log ("Query = ",JSON.stringify(req.query));
-	console.log ("Body = ",JSON.stringify(req.body));
-	console.log ("Params = ",JSON.stringify(req.params));
+	// console.log ("Query = ",JSON.stringify(req.query));
+	// console.log ("Body = ",JSON.stringify(req.body));
+	// console.log ("Params = ",JSON.stringify(req.params));
 	let page = 101; let subpage = 0;
 	if (typeof req.query.page !== "undefined") {
 		page = req.query.page;
