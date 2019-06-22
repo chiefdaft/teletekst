@@ -47,22 +47,16 @@ div.buttonbox {
   width: 96px;
   position: relative;
   top: 0px; 
- /* left: 394px;*/
-
+  border-bottom: 5px;
 } 
 div.navigationbox { 
   width: 96px;
   position: relative;
-  /*top: 144px;
-  left: 394px; */
-
+  border-bottom: 0px;
 } 
 div.navigationbox2 { 
   width: 96px;
   position: relative;
-  /*top: 280px;
-  left: 394px; */
-
 } 
 p { 
   color: var(--main-text-color); 
@@ -123,6 +117,9 @@ button {
 .page-submit {
   width: 96px;
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+.page-input-select {
+  width: 96px;
 }
 .select-page-form {
   margin: auto;

@@ -53,14 +53,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     
     // Build a button box with fast references to pages
     const buttonListBuilder = (accumulator, currentValue) => {
-      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
+      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
     };
     let buttonList = links.reduce(buttonListBuilder, "");
        
   
     // Build/replace fast reference bottom line page titles in de page with links to to the pages
     const fastRefLineBuilder = (accumulator, currentValue) => {
-      return  accumulator.replace(currentValue.title, '<a href=\"/tt/' + currentValue.page + '\">' + currentValue.title + '</a>' );
+      return  accumulator.replace(currentValue.title, '<a href=\"/tt/' + currentValue.page + '/' + provider + '\">' + currentValue.title + '</a>' );
     };
     str = links.reduce(fastRefLineBuilder,str);
     //console.log("hopsa: ", str);
@@ -80,13 +80,13 @@ function formatTTPage(ttpage, page, provider, userAgent) {
             ' + str + '\
             </p></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \
-                ' + pageForm(page) + '\
+                ' + pageForm(page, provider) + '\
                 </div>\
                 <div class=\"navigationbox\"> \
                   ' + buttonList + '\
                   </div>\
                   <div class=\"navigationbox2\"> \
-                  ' + pageNavButtons(ttpage) + '\
+                  ' + pageNavButtons(ttpage, provider) + '\
                   </div> \
                </span> \
             </span></body></html>';  
@@ -94,7 +94,15 @@ function formatTTPage(ttpage, page, provider, userAgent) {
         return str;
       }
   //});
-  function pageForm(page) {
+  function setSelectedOption (provider, index) {
+    let selected = "";
+    if (provider == index) {
+      //console.log("Selected = ", provider)
+      selected = "selected";
+    }
+    return selected;
+  }
+  function pageForm(page, provider) {
     //console.log("Pageform function!", page);
     let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
     <label>Pagina</label>\
@@ -102,6 +110,11 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     <label>SubPag.</label>\
     <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page) + '">\
     <input class="page-submit" type="submit" value="Ga">\
+   <span> <label>Aanbieder</label>\
+    <select class="page-input-select" name="provider" id="provider">\
+      <option value="0" ' +  setSelectedOption(provider, "0") + '>NOS Teletekst</option> \
+      <option value="1" ' +  setSelectedOption(provider, "1") + '>Rijnmond Tekst</option> \
+    </select> </span>\
     </form>'
     //console.log("Form=", form);
     return form;
@@ -123,7 +136,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     //console.log("Style = ", style);
     return style;  
   }
-  function pageNavButtons(ttpage) {
+  function pageNavButtons(ttpage, provider) {
     let pagelinks = [];
     //console.log("pageNavButtons!!", ttpage.nextPage);
     pagelinks.push({"page": ttpage.nextPage, "title": "PgUp"});
@@ -132,7 +145,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     pagelinks.push({"page": ttpage.prevPage, "title": "PgDn" });
     //console.log("Link 3:",JSON.stringify(pagelinks[0]));
     const buttonList2Builder = (accumulator, currentValue) => {
-      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '\'">' + currentValue.title + '</button>' ;
+      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
     };
     //console.log("pageNavButtons XXX!!", ttpage.nextPage);
     return pagelinks.reduce(buttonList2Builder, "") ;

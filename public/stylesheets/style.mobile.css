@@ -109,6 +109,9 @@ button {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   height: 32px;
 }
+.page-input-select {
+  width: 250px;
+}
 .select-page-form {
   margin: auto;
 }
