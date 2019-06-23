@@ -1,7 +1,8 @@
 :root {
-  --main-box-bg-color: rgb(48, 50, 82); 
+  --main-box-bg-color: white; 
   --main-box-border-color: rgb(141, 156, 154);
-  --main-text-color: yellow;
+  --main-text-color: Black;
+  --main-link-color: rgb(43, 40, 40);
   --body-bg-color: whitesmoke;
 }
 
@@ -23,13 +24,13 @@ pre {
   text-indent: 0px;
   background-color: var(--main-box-bg-color);
   width: 374px;
-  border: 10px solid var(--main-box-border-color);
+  border: 2px solid var(--main-box-border-color);
   /*padding: 10px;  */
 }
 div { 
   background-color: var(--main-box-bg-color);
   width: 374px;
-  border: 10px solid var(--main-box-border-color);
+  border: 2px solid var(--main-box-border-color);
   padding: 1px;
   /*margin: 14px;*/
 }
@@ -70,7 +71,7 @@ p.firstline {
   white-space: pre-line;
 }
 a:link {
-  color: rgb(255, 255, 137); 
+  color: var(--main-link-color); 
   text-decoration: none;
 }
 a:visited {
@@ -80,7 +81,7 @@ a:visited {
 label {
   background-color: var(--main-box-bg-color);
   width: 68px;
-  color: white; 
+  color: rgb(8, 8, 8); 
   margin: 1px; border: none; 
   padding: 1px;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; font-size: 15px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 16px; 
@@ -94,8 +95,8 @@ button {
 .page-input {
   width: 56px;
   height: 32px;
-  background: Gray;
-  color: White;
+  background: White;
+  color: Black;
   border: 0px;
   padding-left: 1px;
   padding-right: 1px;
@@ -119,4 +120,11 @@ button {
 .navbutton {
   width: 84px;
   height: 32px
+}
+page-input:invalid {
+  border: 1px dashed black;
+}
+
+page-input:valid {
+  border: 1px solid black;
 }

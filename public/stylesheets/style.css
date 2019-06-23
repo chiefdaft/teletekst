@@ -100,6 +100,7 @@ label {
 button {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   text-transform: capitalize;
+  height: 25px;
 }
 .page-input {
   width: 96px;
@@ -120,6 +121,7 @@ button {
 }
 .page-input-select {
   width: 96px;
+  height: 25px;
 }
 .select-page-form {
   margin: auto;

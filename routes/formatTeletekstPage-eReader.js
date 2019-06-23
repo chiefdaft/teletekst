@@ -1,15 +1,15 @@
 module.exports = function(req, res)  {
     try {
-      let userAgent = req.headers["user-agent"];
+      //let userAgent = req.headers["user-agent"];
       let provider = req.body.provider;
-      res.send(formatTTPage(req.body.textpageobject, req.body.page, provider, userAgent));
+      res.send(formatTTPage(req.body.textpageobject, req.body.page, provider));
     } catch (error) {
       console.log("ERROR : ",error.response);
       res.send({"error": "1", "pagetxt" : "pagenotfound"});
     }
 };
 
-function formatTTPage(ttpage, page, provider, userAgent) {
+function formatTTPage(ttpage, page, provider) {
     let str = ttpage.pagetxt;
     let links = ttpage.fastTextLinks;
     let newstr = "";
@@ -28,7 +28,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
        // found = "page";
         let link = str.substr(n+m+1,3) + '\/' + provider;
         let linktxt = str.substr(n+m+1,3)
-        newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + linktxt + '</a>';
+        newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/e/'+ link + '/">' + linktxt + '</a>';
         m = m+n+3;
       } else {
         // the search found page with subpage first
@@ -38,7 +38,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
           let plink = str.substr(n+m+1,3);
           let slink = str.substr(n+m+5,1);
           let link = plink + '-' + slink  + '\/' + provider;
-          newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/'+ link + '/">' + plink + '/' + slink + '</a>';
+          newstr = newstr + str.substr(m+1,n) +  '<a href="/tt/e/'+ link + '/">' + plink + '/' + slink + '</a>';
           m = m+n+5;
         } else {
             // inconclusive? Cannot be subpage and page
@@ -53,14 +53,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     
     // Build a button box with fast references to pages
     const buttonListBuilder = (accumulator, currentValue) => {
-      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
+      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/e/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
     };
     let buttonList = links.reduce(buttonListBuilder, "");
        
   
     // Build/replace fast reference bottom line page titles in de page with links to to the pages
     const fastRefLineBuilder = (accumulator, currentValue) => {
-      return  accumulator.replace(currentValue.title, '<a href=\"/tt/' + currentValue.page + '/' + provider + '\">' + currentValue.title + '</a>' );
+      return  accumulator.replace(currentValue.title, '<a href=\"/tt/e/' + currentValue.page + '/' + provider + '\">' + currentValue.title + '</a>' );
     };
     str = links.reduce(fastRefLineBuilder,str);
     //console.log("hopsa: ", str);
@@ -74,7 +74,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     // str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
     str = '<html><header> \
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
-           ' + style(userAgent) + '\
+           ' + style() + '\
            <title>Minimalist Teletekst Display</title\
             </header><body><span><pre><p class="firstline">&nbsp \
             ' + str + '\
@@ -106,9 +106,9 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     //console.log("Pageform function!", page);
     let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
     <label>Pagina</label>\
-    <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" value="' + page.substr(0,3) + '">\
+    <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" required pattern="([1-8][0-9][0-9])" value="' + page.substr(0,3) + '">\
     <label>SubPag.</label>\
-    <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page) + '">\
+    <input class="page-input" type="number" name="subpage" id="subpagenumber" maxlength="1" value="' + getSubPage(page) + '">\
     <input class="page-submit" type="submit" value="Ga">\
    <span> <label>Aanbieder</label>\
     <select class="page-input-select" name="provider" id="provider">\
@@ -126,14 +126,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     }
     return subpage;
   }
-  function style(userAgent) {
+  function style() {
     // device detection
     //console.log("UserAgent=",userAgent);
-    let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
-    if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
-      style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
-    }
-    //console.log("Style = ", style);
+    let style = '<link rel="stylesheet" href="/stylesheets/style.ereader.css">';
+    // if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
+    //   style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
+    // }
+    // //console.log("Style = ", style);
     return style;  
   }
   function pageNavButtons(ttpage, provider) {
@@ -145,7 +145,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     pagelinks.push({"page": ttpage.prevPage, "title": "PgDn" });
     //console.log("Link 3:",JSON.stringify(pagelinks[0]));
     const buttonList2Builder = (accumulator, currentValue) => {
-      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
+      return  accumulator + '<button class="navbutton" onclick="window.location.href=\'/tt/e/' + currentValue.page + '/' + provider + '\'">' + currentValue.title + '</button>' ;
     };
     //console.log("pageNavButtons XXX!!", ttpage.nextPage);
     return pagelinks.reduce(buttonList2Builder, "") ;

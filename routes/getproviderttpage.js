@@ -22,29 +22,53 @@ const errorPage = err => {
         }
     }
 }
-const pageNotFound = "           E R R O R \n\
-" + "           ---------\n\
- \n\
- \n\
- \n\
- \n\
- \n\
-" + "    +-------------------------+ \n\
-" + "    +-------------------------+ \n\
-" + "           Pagina xxxxx  \n\
-" + "         is niet gevonden! \n\
-" + "    +-------------------------+ \n\
-" + "    +-------------------------+ \n\
- \n\
- \n\
- \n\
- \n\
- \n\
- \n\
- \n\
- \n\
- \n\
- " + "  nieuws   weer   sport   voetbal ";
+const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
+"+"      _     _     _  _     _     _\n\
+"+"  (_.' )  .' )  .' )( `.  ( `.  ( `._)\n\
+"+"     .' .' .' .' .'  `. `. `. `. `.\n\
+"+"    (_.' .' .' ,' .'`. `, `. `. `._)\n\
+"+"       .' .' ,' .'    `. `, `. `.\n\
+"+"     .' .' .' .'        `. `. `. `.\n\
+"+"    (_.' .' .'            `. `. `._)\n\
+"+"       .' .'                `. `.\n\
+"+"     .' .'                    `. `.\n\
+"+"   .' .'                        `. `.\n\
+"+"  (_.'          Helaas is         `._)\n\
+"+"   _           deze pagina          _\n\
+"+"  ( '.        niet gevonden.      ,' )\n\
+"+"   '. '.                        ,' ,'\n\
+"+"     '. '.                    ,' ,'\n\
+"+"     _ '. '.                ,' ,' _\n\
+"+"    ( '. '. '.            ,' ,' ,' )\n\
+"+"     '. '. '. '.        ,' ,' ,' ,'\n\
+"+"     _ '. '. `. '.    ,' ,` ,' ,' _\n\
+"+"    ( '. '. '. `. '.,' ,` ,' ,' ,' )\n\
+"+"   _ '. '. '. '. '.  ,' ,' ,' ,' ,' _\n\
+"+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
+"+" \n\
+" + "    nieuws   weer   sport   voetbal ";
+
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+// " + "    +-------------------------+ \n\
+// " + "    +-------------------------+ \n\
+// " + "           Pagina xxxxx  \n\
+// " + "         is niet gevonden! \n\
+// " + "    +-------------------------+ \n\
+// " + "    +-------------------------+ \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  \n\
+//  " + "  nieuws   weer   sport   voetbal ";
 
 function cleanUpNOSTTBody(ttpage) {
   let str = striptags(JSON.parse(ttpage).content);
@@ -72,10 +96,25 @@ function cleanUpRijnmondTTBody(ttpage) {
     str = str.substring(p1,p2);
     return str;
   }
+function getFastTestLinks(ttpage) {
+    let pageLinks = [];
+    let p1 = ttpage.indexOf("<FORM") + 5;
+    let p2 = ttpage.indexOf("</FORM>");
+    str = ttpage.substring(p1,p2);
+    p1 = 18+str.indexOf("<A HREF=\"/?pagina=");
+    p2 = p1+3;
+    pageLinks.push(str.substring(p1,p2));
+    p1 = 18+str.lastIndexOf("<A HREF=\"/?pagina=");
+    p2 = p1+3;
+    pageLinks.push(str.substring(p1,p2));
+    //console.log(pageLinks);
+    return pageLinks;
+}
 function pageJsonRijnmondBuilder(ttpage) {
+    let pageLinks = getFastTestLinks(ttpage);
     pageJson = { 
-        "prevPage": "100",
-        "nextPage": "100",
+        "prevPage": pageLinks[0],
+        "nextPage": pageLinks[1],
         "prevSubPage": "1",
         "nextSubPage": "1",
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"120"},{"title":"verkeer","page":"180"}],
@@ -100,7 +139,7 @@ const makeRequest = async (provider, page) => {
                         "prevSubPage": "1",
                         "nextSubPage": "1",
                         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
-                        "pagetxt": pageNotFound.replace("xxxxx", page)
+                        "pagetxt": pageNotFound //.replace("xxxxx", page)
                     };
                     return pageJson;
                 } else {

@@ -110,7 +110,8 @@ button {
   height: 32px;
 }
 .page-input-select {
-  width: 250px;
+  width: 248px;
+  height: 32px;
 }
 .select-page-form {
   margin: auto;
