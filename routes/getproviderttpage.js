@@ -4,6 +4,7 @@
 // pages.
 const got = require('got');
 const striptags = require('striptags');
+const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const errorPage = err => {
     { 
         if (error.statusCode == 404) {
@@ -96,6 +97,13 @@ function cleanUpRijnmondTTBody(ttpage) {
     str = str.substring(p1,p2);
     return str;
   }
+  function cleanUpInfoThuisTTBody(ttpage) {
+    let str = striptags(ttpage, ['pre']);
+    let p1 = str.indexOf("<PRE>") + 5;
+    let p2 = str.indexOf("</PRE>");
+    str = str.substring(p1,p2);
+    return str;
+  }
 function getFastTestLinks(ttpage) {
     let pageLinks = [];
     let p1 = ttpage.indexOf("<FORM") + 5;
@@ -122,11 +130,38 @@ function pageJsonRijnmondBuilder(ttpage) {
     };
   return pageJson;
   }
+  function pageJsonInfoThuisBuilder(ttpage) {
+    let pageLinks = getFastTestLinks(ttpage);
+    pageJson = { 
+        "prevPage": pageLinks[0],
+        "nextPage": pageLinks[1],
+        "prevSubPage": "1",
+        "nextSubPage": "1",
+        "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"scholen","page":"470"}],
+        "pagetxt": cleanUpInfoThuisTTBody(ttpage)
+    };
+  return pageJson;
+  }
 const makeRequestFromNOS = async (page) => {
 	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
 }
 const makeRequestFromRijnmond = async (page) => {
-	return await got('?pagina=' + page + '&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+    let pageno = page.substr(0,3);
+    let subpage = pageno + "a";
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        subpage = pageno + alphabet.charAt(subpageno-1);
+    }
+	return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+}
+const makeRequestFromInfoThuis = async (page) => {
+    let pageno = page.substr(0,3);
+    let subpage = pageno + "a";
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        subpage = pageno + alphabet.charAt(subpageno-1);
+    }
+	return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://teletekst.infothuis.tv/'});
 }
 const makeRequest = async (provider, page) => {
     if (provider == 0 || provider == "0") { 
@@ -151,6 +186,9 @@ const makeRequest = async (provider, page) => {
     };
     if (provider == 1 || provider == "1") {
         return await makeRequestFromRijnmond(page).then(response => pageJsonRijnmondBuilder(response.body), errorPage);
+    };
+    if (provider == 2 || provider == "2") {
+        return await makeRequestFromInfoThuis(page).then(response => pageJsonInfoThuisBuilder(response.body), errorPage);
     };
 };
 module.exports = function (req, res, next) {
