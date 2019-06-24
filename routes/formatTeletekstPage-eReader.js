@@ -114,6 +114,7 @@ function formatTTPage(ttpage, page, provider) {
     <select class="page-input-select" name="provider" id="provider">\
       <option value="0" ' +  setSelectedOption(provider, "0") + '>NOS Teletekst</option> \
       <option value="1" ' +  setSelectedOption(provider, "1") + '>Rijnmond Tekst</option> \
+      <option value="2" ' +  setSelectedOption(provider, "2") + '>InfoThuis</option> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);

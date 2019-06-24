@@ -106,7 +106,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     //console.log("Pageform function!", page);
     let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
     <label>Pagina</label>\
-    <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" value="' + page.substr(0,3) + '">\
+    <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" required pattern="([1-8][0-9][0-9])" value="' + page.substr(0,3) + '">\
     <label>SubPag.</label>\
     <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page) + '">\
     <input class="page-submit" type="submit" value="Ga">\
