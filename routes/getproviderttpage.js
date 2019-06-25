@@ -5,24 +5,6 @@
 const got = require('got');
 const striptags = require('striptags');
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
-const errorPage = err => {
-    { 
-        if (error.statusCode == 404) {
-            pageJson = { 
-                "prevPage": "100",
-                "nextPage": "101",
-                "prevSubPage": "1",
-                "nextSubPage": "1",
-                "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
-                "pagetxt": pageNotFound.replace("xxxxx", page)
-            };
-            return pageJson;
-        } else {
-            console.log(err.statusCode);
-            //res.status(500);
-        }
-    }
-}
 const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
 "+"      _     _     _  _     _     _\n\
 "+"  (_.' )  .' )  .' )( `.  ( `.  ( `._)\n\
@@ -48,6 +30,25 @@ const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
 "+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
 "+" \n\
 " + "    nieuws   weer   sport   voetbal ";
+
+const errorPage = err => {
+    { 
+        if (err.statusCode == 404) {
+            pageJson = { 
+                "prevPage": "100",
+                "nextPage": "101",
+                "prevSubPage": "1",
+                "nextSubPage": "1",
+                "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
+                "pagetxt": pageNotFound //.replace("xxxxx", page)
+            };
+            return pageJson;
+        } else {
+            console.log(err.statusCode);
+            //res.status(500);
+        }
+    }
+}
 
 //  \n\
 //  \n\
@@ -97,7 +98,7 @@ function cleanUpRijnmondTTBody(ttpage) {
     str = str.substring(p1,p2);
     return str;
   }
-  function cleanUpInfoThuisTTBody(ttpage) {
+function cleanUpInfoThuisTTBody(ttpage) {
     let str = striptags(ttpage, ['pre']);
     let p1 = str.indexOf("<PRE>") + 5;
     let p2 = str.indexOf("</PRE>");
