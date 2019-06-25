@@ -27,30 +27,35 @@ pre {
   border: 2px solid var(--main-box-border-color);
   /*padding: 10px;  */
 }
-div { 
+.content {
+  max-width: 500px;
+  margin: auto;
+}
+.buttonbox { 
   background-color: var(--main-box-bg-color);
   width: 374px;
   border: 2px solid var(--main-box-border-color);
   padding: 1px;
-  /*margin: 14px;*/
-}
-div.buttonbox { 
-  width: 374px;
   position: relative;
   /*top: 410px; 
   left: 8px;*/
   text-align: center;
 } 
-div.navigationbox { 
+.navigationbox { 
+  background-color: var(--main-box-bg-color);
   width: 374px;
-  border-top: 5px;
-  border-bottom: 5px;
+  padding: 1px;
+  border: 2px solid var(--main-box-border-color);
   position: relative;
   /*top: 370px;
   left: 8px; */
   text-align: center;
 } 
-div.navigationbox2 { 
+.navigationbox2 { 
+  background-color: var(--main-box-bg-color);
+  width: 374px;
+  border: 2px solid var(--main-box-border-color);
+  padding: 1px;
   width: 374px;
   position: relative;
   /*top: 370px;

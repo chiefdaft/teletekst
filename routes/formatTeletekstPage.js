@@ -76,7 +76,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
            ' + style(userAgent) + '\
            <title>Minimalist Teletekst Display</title\
-            </header><body><span><pre><p class="firstline">&nbsp \
+            </header><body><div class="content"><pre><p class="firstline">&nbsp \
             ' + str + '\
             </p></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \
@@ -89,7 +89,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                   ' + pageNavButtons(ttpage, provider) + '\
                   </div> \
                </span> \
-            </span></body></html>';  
+               <div class="content"></body></html>';  
             //console.log("HTML str=", str);
         return str;
       }

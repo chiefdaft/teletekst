@@ -10,11 +10,14 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: var(--body-bg-color);
 }
+.content {
+  max-width: 600px;
+  margin: auto;
+}
 .spanboxes {
   margin: 0 auto;
-  position: fixed;
+  position: absolute;
   top: 10px;
-  left: 10px;
 }
 .center-div
 {
@@ -28,6 +31,7 @@ h1 {
 pre {
   position: relative;
   left: 142px;
+  right: 100px;
   text-indent: 0px;
   background-color: var(--main-box-bg-color);
   width: 400px;
@@ -35,26 +39,41 @@ pre {
   padding: 10px;
   margin: 10px;
 }
-div { 
+/* div { 
+  background-color: var(--main-box-bg-color);
+  /*width: 332px;*/
+/*  border: 10px solid var(--main-box-border-color);
+  padding: 10px;
+  margin: auto;
+
+} */
+.buttonbox { 
   background-color: var(--main-box-bg-color);
   /*width: 332px;*/
   border: 10px solid var(--main-box-border-color);
   padding: 10px;
   margin: auto;
-
-}
-div.buttonbox { 
   width: 96px;
   position: relative;
   top: 0px; 
   border-bottom: 5px;
 } 
-div.navigationbox { 
+.navigationbox { 
+  background-color: var(--main-box-bg-color);
+  /*width: 332px;*/
+  border: 10px solid var(--main-box-border-color);
+  padding: 10px;
+  margin: auto;
   width: 96px;
   position: relative;
   border-bottom: 0px;
 } 
-div.navigationbox2 { 
+.navigationbox2 { 
+  background-color: var(--main-box-bg-color);
+  /*width: 332px;*/
+  border: 10px solid var(--main-box-border-color);
+  padding: 10px;
+  margin: auto;
   width: 96px;
   position: relative;
 } 

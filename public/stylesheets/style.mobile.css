@@ -10,6 +10,10 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background-color: var(--body-bg-color); 
 } 
+.content {
+  max-width: 500px;
+  margin: auto;
+}
 .center-div
 {
      margin: 0 auto;
@@ -26,36 +30,43 @@ pre {
   border: 10px solid var(--main-box-border-color);
   /*padding: 10px;  */
 }
-div { 
+/* div { 
   background-color: var(--main-box-bg-color);
   width: 374px;
   border: 10px solid var(--main-box-border-color);
   padding: 1px;
   /*margin: 14px;*/
-}
-div.buttonbox { 
+/*} */
+.buttonbox { 
+  background-color: var(--main-box-bg-color);
   width: 374px;
+  border: 10px solid var(--main-box-border-color);
+  padding: 1px;
   position: relative;
   /*top: 410px; 
   left: 8px;*/
   text-align: center;
 } 
-div.navigationbox { 
+.navigationbox { 
+  background-color: var(--main-box-bg-color);
   width: 374px;
-  border-top: 5px;
-  border-bottom: 5px;
+  /*border: 10px solid var(--main-box-border-color);*/
+  border-left: 10px solid var(--main-box-border-color);
+  border-right: 10px solid var(--main-box-border-color);
+  padding: 1px;
+  /*border-top: 5px solid var(--main-box-border-color);
+  border-bottom: 5px solid var(--main-box-border-color);*/
   position: relative;
-  /*top: 370px;
-  left: 8px; */
+  
   text-align: center;
 } 
-div.navigationbox2 { 
+.navigationbox2 { 
+  background-color: var(--main-box-bg-color);
   width: 374px;
+  border: 10px solid var(--main-box-border-color);
+  padding: 1px;
   position: relative;
-  /*top: 370px;
-  left: 8px; */
   text-align: center;
-  
 } 
 p { 
   color: var(--main-text-color); 
