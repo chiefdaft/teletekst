@@ -23,7 +23,7 @@ module.exports = function(req, res, next) {
 	}
 	req.body["page"] = page;
 	
-    let provider = 0;
+    let provider = 0; let oldprovider = 0;
 	if (typeof req.query.provider !== "undefined") {
         provider = req.query.provider;
 	} else {
@@ -31,7 +31,18 @@ module.exports = function(req, res, next) {
           provider = req.body.provider;
 		}
 	} 
+	if (typeof req.query.oldprovider !== "undefined") {
+        oldprovider = req.query.oldprovider;
+	} else {
+		if (typeof req.body.oldprovider !== "undefined") {
+          oldprovider = req.body.oldprovider;
+		}
+	} 
+	if (oldprovider != provider) {
+		req.body["page"] = "100";
+		req.body["subpage"] = "1";
+	}
 	req.body["provider"] = provider;
-	//console.log("Body page =", req.body.page, " ;Body provider =", req.body.provider);
+	req.body["oldprovider"] = provider;
     return next();
 };

@@ -3,13 +3,14 @@
   --main-box-border-color: rgb(141, 156, 154);
   --main-text-color: Black;
   --main-link-color: rgb(43, 40, 40);
-  --body-bg-color: whitesmoke;
+  --body-bg-color: silver;
 }
 
 body { 
   padding: 0px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: var(--body-bg-color); 
+  /*background-color: var(--body-bg-color); */
+  background: linear-gradient(to bottom, var(--body-bg-color) 0%,var(--main-box-bg-color) 100%)
 } 
 .center-div
 {
@@ -96,6 +97,9 @@ button {
   height: 32px;
   text-transform: capitalize;
   width: 88px;
+}
+.oldprovider {
+  display: none;
 }
 .page-input {
   width: 56px;

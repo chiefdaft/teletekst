@@ -88,7 +88,6 @@ function pageJsonNOSBuilder (ttpage) {
         "fastTextLinks": JSON.parse(ttpage).fastTextLinks,
         "pagetxt": cleanUpNOSTTBody(ttpage)
     };
-    //console.log(JSON.stringify(pageJson));
 	return pageJson;
 }
 function cleanUpRijnmondTTBody(ttpage) {
@@ -105,22 +104,63 @@ function cleanUpInfoThuisTTBody(ttpage) {
     str = str.substring(p1,p2);
     return str;
   }
-function getFastTestLinks(ttpage) {
+function getNearbyPageLinks(ttpage) {
     let pageLinks = [];
+    // previous page
     let p1 = ttpage.indexOf("<FORM") + 5;
     let p2 = ttpage.indexOf("</FORM>");
     str = ttpage.substring(p1,p2);
     p1 = 18+str.indexOf("<A HREF=\"/?pagina=");
     p2 = p1+3;
     pageLinks.push(str.substring(p1,p2));
+
+    // next page
     p1 = 18+str.lastIndexOf("<A HREF=\"/?pagina=");
     p2 = p1+3;
     pageLinks.push(str.substring(p1,p2));
-    //console.log(pageLinks);
+
+    // current page
+    let p5 = ttpage.indexOf("<PRE") + 4;
+    let p6 = ttpage.indexOf("</PRE>");
+    str = ttpage.substring(p5,p6);
+    p5 = 18+str.indexOf("<A HREF=\"/?pagina=");
+    p6 = p5+3;
+    let currentPage = str.substring(p5,p6);
+
+    // number of subpages in current page
+    let p3 = ttpage.indexOf("<SELECT NAME=\"sub\" onChange=\"document.ttform.submit()\"></FONT>") + 62;
+    let p4 = ttpage.indexOf("SELECT>",p3);
+    let seltxt = ttpage.substring(p3, p4);
+    
+    let nsp = 0;
+    let iboo = seltxt.indexOf("<OPTION");
+    let ieoo = iboo + 34;
+    
+    let currentSubpage = 1;
+    
+    while (iboo > -1) {
+        nsp++;
+        console.log( iboo, ieoo);
+        if (seltxt.substring(iboo, ieoo).indexOf("SELECTED") > -1 ) {
+            currentSubpage = nsp;
+        }
+        iboo = seltxt.indexOf("<OPTION",iboo+10);
+        ieoo = iboo + 34;
+    }
+    // correction for selection of all subpages
+    nsp--;
+    // check if we don't go into non existing subpages
+    let prevSubPage = 1; let nextSubPage = 1;
+    if (currentSubpage > 1) { prevSubPage = currentSubpage - 1; }
+    if (nsp > 1 && currentSubpage < nsp) { nextSubPage = currentSubpage + 1; } else { nextSubPage = currentSubpage; }
+    
+    // push the subpage up and down counters into the nearby pageLinks array
+    pageLinks.push( currentPage + "-" + prevSubPage );
+    pageLinks.push( currentPage + "-" + nextSubPage );
     return pageLinks;
 }
 function pageJsonRijnmondBuilder(ttpage) {
-    let pageLinks = getFastTestLinks(ttpage);
+    let pageLinks = getNearbyPageLinks(ttpage);
     pageJson = { 
         "prevPage": pageLinks[0],
         "nextPage": pageLinks[1],
@@ -129,15 +169,15 @@ function pageJsonRijnmondBuilder(ttpage) {
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"120"},{"title":"verkeer","page":"180"}],
         "pagetxt": cleanUpRijnmondTTBody(ttpage)
     };
-  return pageJson;
+    return pageJson;
   }
   function pageJsonInfoThuisBuilder(ttpage) {
-    let pageLinks = getFastTestLinks(ttpage);
+    let pageLinks = getNearbyPageLinks(ttpage);
     pageJson = { 
         "prevPage": pageLinks[0],
         "nextPage": pageLinks[1],
-        "prevSubPage": "1",
-        "nextSubPage": "1",
+        "prevSubPage": pageLinks[2],
+        "nextSubPage": pageLinks[3],
         "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"scholen","page":"470"}],
         "pagetxt": cleanUpInfoThuisTTBody(ttpage)
     };

@@ -102,6 +102,9 @@ button {
   text-transform: capitalize;
   width: 88px;
 }
+.oldprovider {
+  display: none;
+}
 .page-input {
   width: 56px;
   height: 32px;

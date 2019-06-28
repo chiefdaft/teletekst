@@ -134,6 +134,9 @@ button {
   font-weight: 400; 
   line-height: 20px; 
 }
+.oldprovider {
+  display: none;
+}
 .page-submit {
   width: 96px;
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
