@@ -26,7 +26,7 @@ pre {
   background-color: var(--main-box-bg-color);
   width: 374px;
   border: 2px solid var(--main-box-border-color);
-  /*padding: 10px;  */
+    /*padding: 10px;  */
 }
 .content {
   max-width: 500px;
