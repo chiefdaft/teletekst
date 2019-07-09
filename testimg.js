@@ -5,55 +5,46 @@ const got = require('got');
 //const sharp = require('sharp');
 var Jimp = require('jimp');
 const hashMap = require('./routes/json/hashmap.json');
-const listChars = hashMap.list;
+const listChars = hashMap.listSingleBlock;
+const listDoubleChars = hashMap.listDoubleBlock;
+
 function getCharByHash(hash) {
   return listChars.filter(
     function(listChars) {
       return listChars.hash == hash;
     }
   )
-}
-
-
-/* const imgDimensions = sharp().metadata()
-  .then(function(metadata) { return { "dimensions":  {"width": metadata.width, "height": metadata.height}}} )
-  .then(function(img){ console.log("breedte:", img.dimensions.width, ", hoogte:", img.dimensions.height)});
-
-const getImage = async (page) => {
- return await got('https://storage-gelderland.rgcdn.nl/teletext/' + page + 's00.png');
-}
-function getDimensions(response) {
-  return sharp(response.body).metadata()
-  .then(function(metadata) { return { "dimensions":  {"width": metadata.width, "height": metadata.height}}} )
-}
-//getImage('101').then(response => console.log(image));
-
-//getImage('101').then(response =>  function (response) {
-  
-}
+};
+function getDoubleCharByHash(hash) {
+  return listDoubleChars.filter(
+    function(listDoubleChars) {
+      return listDoubleChars.hash == hash;
+    }
   )
-*/
-// (async () => {
-//     try { 
-// 		const response = await got('https://storage-gelderland.rgcdn.nl/teletext/103s00.png');
-    
-//  	} catch (error) {
-//         console.log(error);
-//         //=> 'Internal server error ...'
-//     }
-// })();
-// const image = sharp('102s00.png');
-//  const image = sharp('https://storage-gelderland.rgcdn.nl/teletext/103s00.png');
-//  image.metadata().then(function(metadata) { return { "dimensions":  {"width": metadata.width, "height": metadata.height}}} )
-//  .then(function(img){ console.log("breedte:", img.dimensions.width, ", hoogte:", img.dimensions.height)});
-//console.log("Breedte:", width, "Hoogte:", height);
+};
+
+const nChrs = 40; 
+const nLines = 25;
+const skipBlock = [ nLines * nChrs];
+
+function initSkipBlocks() {
+  for (l = 0; l < nLines; l++) {
+    for (c = 0; c < nChrs; c++) {
+      skipBlock[l*c + c] = 0;
+    }
+  }
+}
+
 const blackHx = Jimp.cssColorToHex("Black");
 const whiteHx = Jimp.cssColorToHex("White");
-console.log("Black:", blackHx);
+//console.log("Black:", blackHx);
 var text = "";
-Jimp.read("https://storage-gelderland.rgcdn.nl/teletext/104s00.png", function (err, image) {
-  let x =0; let y = 0;
-  let nChrs = 40; let nLines = 25;
+let url = "https://storage-w.rgcdn.nl/teletext/104s00.png";
+//let url = "https://storage-gelderland.rgcdn.nl/teletext/415s00.png";
+Jimp.read(url, function (err, image) {
+  let x =0; let y = 0; 
+  initSkipBlocks();
+
   //let hashArray = []; let hash2Array = [];
   let charBlock = {"dimension": {"width": image.bitmap.width/nChrs, "height": image.bitmap.height/nLines }}
     console.log("color:", image.getPixelColor(x, y)); // returns the colour of that pixel e.g. 0xFFFFFFFF
@@ -63,64 +54,67 @@ Jimp.read("https://storage-gelderland.rgcdn.nl/teletext/104s00.png", function (e
     let h = parseInt(charBlock.dimension.height);
     for (j = 0; j< nLines; j++) {
       for (i = 0; i < nChrs; i++) {
-        let imgBlock = image.clone();
-        let img2Block = image.clone();
-        //imgBlock.background(blackHx);
-        //console.log ("j:",j,", i:",i);
-        
-        imgBlock.crop(i*w,  j*h, w , h );
-        if (j < nLines - 1) {
-          img2Block.crop(i*w,  j*h, w , 2*h );
-        }
-        //console.log ("imgBlock", i*w,"\t",  j*h )
-        //console.log("cropped", imgBlock.bitmap.width);
-        let colorBlock = imgBlock.getPixelColor(0,0); // same for both character sizes
-        //console.log("got colr",colorBlock);
-        // iterarate through the blocks height
-        for (y = 0; y < h; y++) {
-          // per line, iterate through the character blocks
-          for (x = 0; x < w; x++) {
-           // console.log ("y:",y,", x:",x);
-            let colorPixel = imgBlock.getPixelColor(x, y)
-            if (colorPixel == colorBlock) {
-              imgBlock.setPixelColor(blackHx, x, y);
-            } else {
-              imgBlock.setPixelColor(whiteHx, x, y);
-            }
-          }
-        }
-        // Double height characters (not necessary if there is only 1 row left)
-        for (y = 0; y < 2*h; y++) {
-          if (j < nLines - 1) {
+        let char = " "; // If block will be skipped a blank will be added anyway
+        if (!skipBlock[j*i +1]) {
+          let imgBlock = image.clone();
+          
+          imgBlock.crop(i*w,  j*h, w , h );
+          let colorBlock = imgBlock.getPixelColor(0,0); // same for both character sizes
+          // iterarate through the blocks height
+          for (y = 0; y < h; y++) {
+            // per line, iterate through the character blocks pixels
             for (x = 0; x < w; x++) {
-              // console.log ("y:",y,", x:",x);
-              let color2Pixel = img2Block.getPixelColor(x, y)
-              if (color2Pixel == colorBlock) {
-                img2Block.setPixelColor(blackHx, x, y);
+            // console.log ("y:",y,", x:",x);
+              let colorPixel = imgBlock.getPixelColor(x, y)
+              if (colorPixel == colorBlock) {
+                imgBlock.setPixelColor(blackHx, x, y);
               } else {
-                img2Block.setPixelColor(whiteHx, x, y);
+                imgBlock.setPixelColor(whiteHx, x, y);
               }
             }
+          } // end looping through single character pixel block
+          let hash = imgBlock.hash();
+          let hashMatch = getCharByHash(hash);
+          // letś try a double character block... (no match with single chr block)
+          if (!hashMatch.length) {
+            // Double height characters (not necessary if there is only 1 row left)
+            
+            if (j < nLines - 1) {
+              let img2Block = image.clone();
+              img2Block.crop(i*w,  j*h, w , 2*h );
+              
+              for (y = 0; y < 2*h; y++) {
+                if (j < nLines - 1) {
+                  for (x = 0; x < w; x++) {
+                    // console.log ("y:",y,", x:",x);
+                    let color2Pixel = img2Block.getPixelColor(x, y)
+                    if (color2Pixel == colorBlock) {
+                      img2Block.setPixelColor(blackHx, x, y);
+                    } else {
+                      img2Block.setPixelColor(whiteHx, x, y);
+                    }
+                  }
+                }
+              }
+              let hash2 = img2Block.hash();
+              let hashMatch2 = getDoubleCharByHash(hash2);
+              if (!hashMatch2.length) {
+                imgBlock.write("../../dump/" + j + "-" + i + "_block.png");
+                img2Block.write("../../dump/" + j + "-" + i + "_2block.png");
+                char = '#';
+                console.log("Hash," + j + "-" + i + "_1block.png", hash, hashMatch);
+                console.log("Hash2," + j + "-" + i + "_2block.png", hash2, hashMatch2);
+              } else {
+                char = hashMatch2[0].char;
+                //skipBlock[(j+1)*i +i] = 1;
+              }
+            }
+          } else {
+            char = hashMatch[0].char;
           }
-        }
-        
-        let char = " ";
-        let hash = imgBlock.hash();
-        let hashMatch = getCharByHash(hash);
-        if (!hashMatch.length) {
-          imgBlock.write("../../dump/" + j + "-" + i + "_block.png");
-          char = '#';
-        } else {
-          char = hashMatch[0].char;
-        }
+        } 
+        // If this block was skipped a blank will be returned
         text += char;
-       console.log("Hash,", j,",", i,",", hash, hashMatch);
-       
-       
-        // double height characters
-        // if (j < nLines - 1) {
-        //   img2Block.write("../../dump/" + j + "-" + i + "_2block.png");
-        // }
       }
       text += "\n";
     }
