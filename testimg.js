@@ -39,7 +39,7 @@ const blackHx = Jimp.cssColorToHex("Black");
 const whiteHx = Jimp.cssColorToHex("White");
 //console.log("Black:", blackHx);
 var text = "";
-let url = "https://storage-w.rgcdn.nl/teletext/104s00.png";
+let url = "https://storage-w.rgcdn.nl/teletext/108s00.png";
 //let url = "https://storage-gelderland.rgcdn.nl/teletext/415s00.png";
 Jimp.read(url, function (err, image) {
   let x =0; let y = 0; 
@@ -55,7 +55,7 @@ Jimp.read(url, function (err, image) {
     for (j = 0; j< nLines; j++) {
       for (i = 0; i < nChrs; i++) {
         let char = " "; // If block will be skipped a blank will be added anyway
-        if (!skipBlock[j*i +1]) {
+        if (!skipBlock[nChrs*j + i]) {
           let imgBlock = image.clone();
           
           imgBlock.crop(i*w,  j*h, w , h );
@@ -106,7 +106,7 @@ Jimp.read(url, function (err, image) {
                 console.log("Hash2," + j + "-" + i + "_2block.png", hash2, hashMatch2);
               } else {
                 char = hashMatch2[0].char;
-                //skipBlock[(j+1)*i +i] = 1;
+                skipBlock[(j+1)*nChrs +i] = 1;
               }
             }
           } else {
