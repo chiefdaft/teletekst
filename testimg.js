@@ -39,7 +39,7 @@ const blackHx = Jimp.cssColorToHex("Black");
 const whiteHx = Jimp.cssColorToHex("White");
 //console.log("Black:", blackHx);
 var text = "";
-let url = "https://storage-w.rgcdn.nl/teletext/108s00.png";
+let url = "https://storage-w.rgcdn.nl/teletext/605s00.png";
 //let url = "https://storage-gelderland.rgcdn.nl/teletext/415s00.png";
 Jimp.read(url, function (err, image) {
   let x =0; let y = 0; 
@@ -101,7 +101,7 @@ Jimp.read(url, function (err, image) {
               if (!hashMatch2.length) {
                 imgBlock.write("../../dump/" + j + "-" + i + "_block.png");
                 img2Block.write("../../dump/" + j + "-" + i + "_2block.png");
-                char = '#';
+                char = '=';
                 console.log("Hash," + j + "-" + i + "_1block.png", hash, hashMatch);
                 console.log("Hash2," + j + "-" + i + "_2block.png", hash2, hashMatch2);
               } else {
