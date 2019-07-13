@@ -3,6 +3,9 @@
 // links. These can be used for buttons to navigate to different
 // pages.
 const got = require('got');
+var Jimp = require('jimp');
+// const p = require('phin');
+const parseTTImage = require('../routes/parseTTImage');
 const striptags = require('striptags');
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
@@ -30,8 +33,50 @@ const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
 "+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
 "+" \n\
 " + "    nieuws   weer   sport   voetbal ";
-
+const pageNotFoundTimeOut = "     Oeps, er ging iets verkeerd... \n\
+"+"      _     _     _  _     _     _\n\
+"+"  (_.' )  .' )  .' )( `.  ( `.  ( `._)\n\
+"+"     .' .' .' .' .'  `. `. `. `. `.\n\
+"+"    (_.' .' .' ,' .'`. `, `. `. `._)\n\
+"+"       .' .' ,' .'    `. `, `. `.\n\
+"+"     .' .' .' .'        `. `. `. `.\n\
+"+"    (_.' .' .'            `. `. `._)\n\
+"+"       .' .'                `. `.\n\
+"+"     .' .'                    `. `.\n\
+"+"   .' .'                        `. `.\n\
+"+"  (_.'        Helaas duurde      `._)\n\
+"+"   _          deze operatie          _\n\
+"+"  ( '.        langer dan          ,' )\n\
+"+"   '. '.      verwacht.         ,' ,'\n\
+"+"     '. '.                    ,' ,'\n\
+"+"     _ '. '.                ,' ,' _\n\
+"+"    ( '. '. '.            ,' ,' ,' )\n\
+"+"     '. '. '. '.        ,' ,' ,' ,'\n\
+"+"     _ '. '. `. '.    ,' ,` ,' ,' _\n\
+"+"    ( '. '. '. `. '.,' ,` ,' ,' ,' )\n\
+"+"   _ '. '. '. '. '.  ,' ,' ,' ,' ,' _\n\
+"+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
+"+" \n\
+" + "    nieuws   weer   sport   voetbal ";
 const errorPage = err => {
+    { 
+        if (err.statusCode == 404) {
+            pageJson = { 
+                "prevPage": "100",
+                "nextPage": "101",
+                "prevSubPage": "1",
+                "nextSubPage": "1",
+                "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
+                "pagetxt": pageNotFoundTimeOut //.replace("xxxxx", page)
+            };
+            return pageJson;
+        } else {
+            console.log(err.statusCode);
+            //res.status(500);
+        }
+    }
+}
+const errorPageTimeOut = err => {
     { 
         if (err.statusCode == 404) {
             pageJson = { 
@@ -49,7 +94,6 @@ const errorPage = err => {
         }
     }
 }
-
 //  \n\
 //  \n\
 //  \n\
@@ -140,7 +184,7 @@ function getNearbyPageLinks(ttpage) {
     
     while (iboo > -1) {
         nsp++;
-        console.log( iboo, ieoo);
+        //console.log( iboo, ieoo);
         if (seltxt.substring(iboo, ieoo).indexOf("SELECTED") > -1 ) {
             currentSubpage = nsp;
         }
@@ -160,6 +204,7 @@ function getNearbyPageLinks(ttpage) {
     return pageLinks;
 }
 function pageJsonRijnmondBuilder(ttpage) {
+    //console.log("TTPAGE=",ttpage);
     let pageLinks = getNearbyPageLinks(ttpage);
     pageJson = { 
         "prevPage": pageLinks[0],
@@ -172,6 +217,7 @@ function pageJsonRijnmondBuilder(ttpage) {
     return pageJson;
   }
   function pageJsonInfoThuisBuilder(ttpage) {
+    //console.log("TTPAGE=",ttpage);
     let pageLinks = getNearbyPageLinks(ttpage);
     pageJson = { 
         "prevPage": pageLinks[0],
@@ -183,8 +229,34 @@ function pageJsonRijnmondBuilder(ttpage) {
     };
   return pageJson;
   }
+function pageJsonOmroepWestBuilder(ttpage) {
+    console.log("make omroep west json")
+    pageJson = { 
+        "prevPage": "",
+        "nextPage": "",
+        "prevSubPage": "",
+        "nextSubPage": "",
+        "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"weer","page":"151"}],
+        "pagetxt": ttpage
+    };
+    return pageJson;
+}
+function pageJsonOmroepGelderlandBuilder(ttpage) {
+    console.log("make omroep west json")
+    pageJson = { 
+        "prevPage": "",
+        "nextPage": "",
+        "prevSubPage": "",
+        "nextSubPage": "",
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"171"},{"title":"sport","page":"200"},{"title":"verkeer","page":"175"}],
+        "pagetxt": ttpage
+    };
+    return pageJson;
+}
 const makeRequestFromNOS = async (page) => {
-	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+    //let url = 'https://teletekst-data.nos.nl/json/' + page;
+    return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+    //return await p({'url': url});
 }
 const makeRequestFromRijnmond = async (page) => {
     let pageno = page.substr(0,3);
@@ -193,7 +265,11 @@ const makeRequestFromRijnmond = async (page) => {
         let subpageno = page.substring(4,page.length);
         subpage = pageno + alphabet.charAt(subpageno-1);
     }
-	return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+    //let url = 'https://rijnmond-ttw.itnm.nl/' + '?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt';
+    //console.log('url:',url);
+    return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+    // let url = 'https://rijnmond-ttw.itnm.nl/' + '?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt';
+    // return await p({'url': url});
 }
 const makeRequestFromInfoThuis = async (page) => {
     let pageno = page.substr(0,3);
@@ -202,7 +278,38 @@ const makeRequestFromInfoThuis = async (page) => {
         let subpageno = page.substring(4,page.length);
         subpage = pageno + alphabet.charAt(subpageno-1);
     }
-	return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://teletekst.infothuis.tv/'});
+    //let url = 'https://teletekst.infothuis.tv/' + '?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt';
+    return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://teletekst.infothuis.tv/'});
+    //return await p({'url': url});
+}
+function translatePageToPng(page) {
+    let pageno = page.substr(0,3);
+    let subpageOW = pageno + "s";
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        
+        if (parseInt(subpageno) < 10) {
+            subpageOW += "0" + subpageno
+        } else {
+            subpageOW += subpageno
+        }
+        
+    } else {
+        subpageOW += "00";
+    }
+    return subpageOW + ".png"
+}
+const makeRequestFromOmroepWest = async (page) => {
+    console.log("start omroep west 1")
+    let pageImage = translatePageToPng(page);
+    let url = "https://storage-w.rgcdn.nl/teletext/" + pageImage;
+    return await Jimp.read(url);
+}
+const makeRequestFromOmroepGelderland = async (page) => {
+    console.log("start omroep gelderland 1")
+    let pageImage = translatePageToPng(page);
+    let url = "https://storage-gelderland.rgcdn.nl/teletext/" + pageImage;
+    return await Jimp.read(url);
 }
 const makeRequest = async (provider, page) => {
     if (provider == 0 || provider == "0") { 
@@ -214,7 +321,7 @@ const makeRequest = async (provider, page) => {
                         "nextPage": "101",
                         "prevSubPage": "1",
                         "nextSubPage": "1",
-                        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"603"},{"title":"sport","page":"601"},{"title":"voetbal","page":"801"}],
+                        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"700"},{"title":"sport","page":"600"},{"title":"voetbal","page":"800"}],
                         "pagetxt": pageNotFound //.replace("xxxxx", page)
                     };
                     return pageJson;
@@ -230,6 +337,12 @@ const makeRequest = async (provider, page) => {
     };
     if (provider == 2 || provider == "2") {
         return await makeRequestFromInfoThuis(page).then(response => pageJsonInfoThuisBuilder(response.body), errorPage);
+    };
+    if (provider == 3 || provider == "3") {
+        return await makeRequestFromOmroepWest(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepWestBuilder(response), errorPage);
+    };
+    if (provider == 4 || provider == "4") {
+        return await makeRequestFromOmroepGelderland(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepGelderlandBuilder(response), errorPage);
     };
 };
 module.exports = function (req, res, next) {

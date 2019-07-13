@@ -38,9 +38,16 @@ module.exports = function(req, res, next) {
           oldprovider = req.body.oldprovider;
 		}
 	} 
+	if (provider > 2) {
+		subpage = (subpage <= 0 ) ? 0 : subpage -1  
+	}
 	if (oldprovider != provider) {
 		req.body["page"] = "100";
-		req.body["subpage"] = "1";
+		if (provider > 2) {
+			req.body["subpage"] = "0";
+		} else {
+			req.body["subpage"] = "1";
+		}
 	}
 	req.body["provider"] = provider;
 	req.body["oldprovider"] = provider;

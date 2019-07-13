@@ -8,7 +8,15 @@ module.exports = function(req, res)  {
       res.send({"error": "1", "pagetxt" : "pagenotfound"});
     }
 };
-
+function changeProviderScript () {
+  let src = '<script> function changeProvider() {\
+    let p = document.getElementById(\'provider\').value;\
+    window.location.href="/tt/100/" + p;\
+    return true;\
+  } </script>';
+  // console.log(src)
+  return src;
+}
 function formatTTPage(ttpage, page, provider, userAgent) {
     let str = ttpage.pagetxt;
     let links = ttpage.fastTextLinks;
@@ -75,7 +83,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     str = '<html><header> \
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> \
            ' + style(userAgent) + '\
-           <title>Minimalist Teletekst Display</title\
+           <title>Minimalist Teletekst Display</title>\
             </header><body><div class="content"><pre><p class="firstline">&nbsp \
             ' + str + '\
             </p></pre>\
@@ -89,11 +97,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                   ' + pageNavButtons(ttpage, provider) + '\
                   </div> \
                </span> \
-               <div class="content"></body></html>';  
-            //console.log("HTML str=", str);
+               </div>\
+               ' + changeProviderScript() + ' \
+               </body></html>';  
+            console.log("HTML str=", changeProviderScript());
         return str;
       }
   //});
+
   function setSelectedOption (provider, index) {
     let selected = "";
     if (provider == index) {
@@ -109,20 +120,22 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     <label>Pagina</label>\
     <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" required pattern="([1-8][0-9][0-9])" value="' + page.substr(0,3) + '">\
     <label>SubPag.</label>\
-    <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page) + '">\
+    <input class="page-input" type="number" name="subpage" id="subpagenumber" value="' + getSubPage(page, provider) + '">\
     <input class="page-submit" type="submit" value="Ga">\
    <span> <label>Aanbieder</label>\
-    <select class="page-input-select" name="provider" id="provider">\
+    <select class="page-input-select" name="provider" id="provider" onchange="changeProvider()">\
       <option value="0" ' +  setSelectedOption(provider, "0") + '>NOS Teletekst</option> \
       <option value="1" ' +  setSelectedOption(provider, "1") + '>Rijnmond Tekst</option> \
       <option value="2" ' +  setSelectedOption(provider, "2") + '>InfoThuis</option> \
+      <option value="3" ' +  setSelectedOption(provider, "3") + '>Omroep West</option> \
+      <option value="4" ' +  setSelectedOption(provider, "4") + '>Omroep Gelderland</option> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);
     return form;
   }
-  function getSubPage (page) { 
-    let subpage = 1;
+  function getSubPage (page, provider) { 
+    let subpage = (provider < 3) ? 1 : 0;
     if (page.length == 5) {
       subpage = page.substr(4,1);
     }
