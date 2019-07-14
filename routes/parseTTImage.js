@@ -1,53 +1,69 @@
 
 var Jimp = require('jimp');
 const hashMap = require('./json/hashmap.json');
-const listChars = hashMap.listSingleBlock;
-const listDoubleChars = hashMap.listDoubleBlock;
+// const listChars = hashMap.listBlock12;
+// const listDoubleChars = hashMap.listBlock24;
 
-function getCharByHash(hash) {
-  return listChars.filter(
-    function(listChars) {
-      return listChars.hash == hash;
-    }
-  )
-};
-function getDoubleCharByHash(hash) {
-  return listDoubleChars.filter(
-    function(listDoubleChars) {
-      return listDoubleChars.hash == hash;
-    }
-  )
-};
+// function getCharByHash(hash) {
+//   return listChars.filter(
+//     function(listChars) {
+//       return listChars.hash == hash;
+//     }
+//   )
+// };
+// function getDoubleCharByHash(hash) {
+//   return listDoubleChars.filter(
+//     function(listDoubleChars) {
+//       return listDoubleChars.hash == hash;
+//     }
+//   )
+// };
 
 const nChrs = 40; 
-const nLines = 25;
-const skipBlock = [ nLines * nChrs];
-
-function initSkipBlocks() {
-  for (l = 0; l < nLines; l++) {
-    for (c = 0; c < nChrs; c++) {
-      skipBlock[l*c + c] = 0;
-    }
-  }
-}
-
-
-//console.log("Black:", blackHx);
 
 ////////////////////////////////////////////////////
 // module.exports =  image => new Promise (
 //   (resolve, reject)
 module.exports = function (image) {
   return new Promise ((resolve, reject) => {
+  
   const blackHx = Jimp.cssColorToHex("Black");
   const whiteHx = Jimp.cssColorToHex("White");
   var text = "";
   console.log("processing...")
   let x =0; let y = 0; 
-  initSkipBlocks();
-
-  //let hashArray = []; let hash2Array = [];
-  let charBlock = {"dimension": {"width": image.bitmap.width/nChrs, "height": image.bitmap.height/nLines }}
+  let imgWidth = image.bitmap.width;
+  let imgHeight = image.bitmap.height;
+  var nLines = (imgHeight > 300) ? 24 : 25;
+  const skipBlock = [ nLines * nChrs];
+  for (l = 0; l < nLines; l++) {
+    for (c = 0; c < nChrs; c++) {
+      skipBlock[l*c + c] = 0;
+    }
+  }
+  if (nLines == 25) {
+    listChars = hashMap.listBlock12;
+    listDoubleChars = hashMap.listBlock24;
+  } else {
+    listChars = hashMap.listBlock14;
+    listDoubleChars = hashMap.listBlock28;
+  }
+  
+  function getCharByHash(hash) {
+    return listChars.filter(
+      function(listChars) {
+        return listChars.hash == hash;
+      }
+    )
+  };
+  function getDoubleCharByHash(hash) {
+    return listDoubleChars.filter(
+      function(listDoubleChars) {
+        return listDoubleChars.hash == hash;
+      }
+    )
+  };
+  let charBlock = {"dimension": {"width": imgWidth/nChrs, "height": imgHeight/nLines }}
      // console.log("color:", image.getPixelColor(x, y)); // returns the colour of that pixel e.g. 0xFFFFFFFF
      // console.log("dimensions:", image.bitmap.width, 'x', image.bitmap.height);
      // console.log("Block dimensions:", charBlock.dimension.width, 'x', charBlock.dimension.height);

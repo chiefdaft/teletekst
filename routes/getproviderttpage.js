@@ -232,10 +232,10 @@ function pageJsonRijnmondBuilder(ttpage) {
 function pageJsonOmroepWestBuilder(ttpage) {
     console.log("make omroep west json")
     pageJson = { 
-        "prevPage": "",
-        "nextPage": "",
-        "prevSubPage": "",
-        "nextSubPage": "",
+        "prevPage": "100",
+        "nextPage": "101",
+        "prevSubPage": "0",
+        "nextSubPage": "0",
         "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"weer","page":"151"}],
         "pagetxt": ttpage
     };
@@ -244,11 +244,23 @@ function pageJsonOmroepWestBuilder(ttpage) {
 function pageJsonOmroepGelderlandBuilder(ttpage) {
     console.log("make omroep west json")
     pageJson = { 
-        "prevPage": "",
-        "nextPage": "",
-        "prevSubPage": "",
-        "nextSubPage": "",
+        "prevPage": "100",
+        "nextPage": "102",
+        "prevSubPage": "0",
+        "nextSubPage": "0",
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"171"},{"title":"sport","page":"200"},{"title":"verkeer","page":"175"}],
+        "pagetxt": ttpage
+    };
+    return pageJson;
+}
+function pageJsonOmroepBrabantBuilder(ttpage) {
+    console.log("make omroep brababnt json")
+    pageJson = { 
+        "prevPage": "100",
+        "nextPage": "102",
+        "prevSubPage": "1",
+        "nextSubPage": "1",
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"698"},{"title":"verkeer","page":"190"}],
         "pagetxt": ttpage
     };
     return pageJson;
@@ -282,6 +294,7 @@ const makeRequestFromInfoThuis = async (page) => {
     return await got('?pagina=' + pageno + '&sub=' + subpage + '&weergave=txt', {baseUrl: 'https://teletekst.infothuis.tv/'});
     //return await p({'url': url});
 }
+// Translate page index to png for West an Gelderland
 function translatePageToPng(page) {
     let pageno = page.substr(0,3);
     let subpageOW = pageno + "s";
@@ -293,11 +306,27 @@ function translatePageToPng(page) {
         } else {
             subpageOW += subpageno
         }
-        
     } else {
         subpageOW += "00";
     }
     return subpageOW + ".png"
+}
+// Translate page index to png for Brabant
+function translatePageToPng2(page) {
+    let pageno = page.substr(0,3);
+    let subpageOB = pageno + "_00";
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        
+        if (parseInt(subpageno) < 10) {
+            subpageOB += "0" + subpageno
+        } else {
+            subpageOB += subpageno
+        }
+    } else {
+        subpageOB += "01";
+    }
+    return subpageOB + ".png"
 }
 const makeRequestFromOmroepWest = async (page) => {
     console.log("start omroep west 1")
@@ -309,6 +338,12 @@ const makeRequestFromOmroepGelderland = async (page) => {
     console.log("start omroep gelderland 1")
     let pageImage = translatePageToPng(page);
     let url = "https://storage-gelderland.rgcdn.nl/teletext/" + pageImage;
+    return await Jimp.read(url);
+}
+const makeRequestFromOmroepBrabant = async (page) => {
+    console.log("start omroep brabant 1")
+    let pageImage = translatePageToPng2(page);
+    let url = "https://storage-brabant.rgcdn.nl/teletext/" + pageImage;
     return await Jimp.read(url);
 }
 const makeRequest = async (provider, page) => {
@@ -339,10 +374,13 @@ const makeRequest = async (provider, page) => {
         return await makeRequestFromInfoThuis(page).then(response => pageJsonInfoThuisBuilder(response.body), errorPage);
     };
     if (provider == 3 || provider == "3") {
-        return await makeRequestFromOmroepWest(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepWestBuilder(response), errorPage);
+        return await makeRequestFromOmroepWest(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepWestBuilder(response), errorPageTimeOut);
     };
     if (provider == 4 || provider == "4") {
-        return await makeRequestFromOmroepGelderland(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepGelderlandBuilder(response), errorPage);
+        return await makeRequestFromOmroepGelderland(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepGelderlandBuilder(response), errorPageTimeOut);
+    };
+    if (provider == 5 || provider == "5") {
+        return await makeRequestFromOmroepBrabant(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepBrabantBuilder(response), errorPageTimeOut);
     };
 };
 module.exports = function (req, res, next) {
