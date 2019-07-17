@@ -1,7 +1,7 @@
 :root {
   --main-box-bg-color: rgb(48, 50, 82); 
   --main-box-border-color: rgb(141, 156, 154);
-  --main-text-color: yellow;
+  --main-text-color: rgb(155, 255, 0);
   --body-bg-color: whitesmoke;
 }
 
@@ -97,7 +97,7 @@ p.firstline {
   white-space: pre-line;
 }
 a:link {
-  color: rgb(255, 255, 137); 
+  color: rgb(155, 255, 100); 
   text-decoration: none;
 }
 a:visited {

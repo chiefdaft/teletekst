@@ -8,7 +8,15 @@ module.exports = function(req, res)  {
       res.send({"error": "1", "pagetxt" : "pagenotfound"});
     }
 };
-
+function changeProviderScript () {
+  let src = '<script> function changeProvider() {\
+    let p = document.getElementById(\'provider\').value;\
+    window.location.href="/tt/e/100/" + p;\
+    return true;\
+  } </script>';
+  // console.log(src)
+  return src;
+}
 function formatTTPage(ttpage, page, provider) {
     let str = ttpage.pagetxt;
     let links = ttpage.fastTextLinks;
@@ -89,7 +97,9 @@ function formatTTPage(ttpage, page, provider) {
                   ' + pageNavButtons(ttpage, provider) + '\
                   </div> \
                </span> \
-            </div></body></html>';  
+            </div>\
+            ' + changeProviderScript() + ' \
+            </body></html>';  
             //console.log("HTML str=", str);
         return str;
       }
@@ -112,10 +122,12 @@ function formatTTPage(ttpage, page, provider) {
     <input class="page-input" type="number" name="subpage" id="subpagenumber" maxlength="1" value="' + getSubPage(page) + '">\
     <input class="page-submit" type="submit" value="Ga">\
    <span> <label>Aanbieder</label>\
-    <select class="page-input-select" name="provider" id="provider">\
+    <select class="page-input-select" name="provider" id="provider" onchange="changeProvider()">\
       <option value="0" ' +  setSelectedOption(provider, "0") + '>NOS Teletekst</option> \
       <option value="1" ' +  setSelectedOption(provider, "1") + '>Rijnmond Tekst</option> \
       <option value="2" ' +  setSelectedOption(provider, "2") + '>InfoThuis</option> \
+      <option value="3" ' +  setSelectedOption(provider, "3") + '>Omroep West</option> \
+      <option value="4" ' +  setSelectedOption(provider, "4") + '>Omroep Gelderland</option> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);

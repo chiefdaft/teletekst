@@ -42,12 +42,14 @@ const whiteHx = Jimp.cssColorToHex("White");
 //var text = "";
 //let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/103-01.gif";
 //let url = "https://storage-brabant.rgcdn.nl/teletext/290_0001.png";
-let url = "https://storage-w.rgcdn.nl/teletext/601s00.png";
-//let url = "https://storage-gelderland.rgcdn.nl/teletext/899s00.png";
+//let url = "https://storage-w.rgcdn.nl/teletext/100s00.png";
+//let url = "http://vps01.l1.nl/teletext/L1/png/101s00.png";
+let url = "https://storage-gelderland.rgcdn.nl/teletext/263s00.png";
+//let url = "http://localhost/GIFE0D2.tmp.gif";
 Jimp.read(url, function (err, image) {
   var text = "";
   console.log("processing...")
-  let x =0; let y = 0; 
+  let x =0; let y = 0;
   let imgWidth = image.bitmap.width;
   let imgHeight = image.bitmap.height;
   var nLines = (imgHeight > 300) ? 24 : 25;
@@ -169,7 +171,7 @@ Jimp.read(url, function (err, image) {
                 let imgBlock2 = image.clone();
                 imgBlock2.crop(i*w,  j*h, w , 2*h );
                 imgBlock2.write("../../dump/" + j + "-" + i + "_Dblock.png");
-               // console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
+              //  console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
                 console.log( j + "-" + i + "_Dblock.png,\t{ \"hash\": \"" + hash2 + "\", \"char\": \"==\" },");
           //       console.log("hexBlockBytes, " + j + "-" + i + "_Dblock.png, { \"hash\": \"" + hash2 + "\", \"char\": \"==\" }");
                 char = '=';

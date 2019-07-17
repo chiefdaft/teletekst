@@ -1,6 +1,6 @@
 
 var Jimp = require('jimp');
-const hashMap = require('./json/hashmap2.json');
+const hashMap = require('./json/hashmap.json');
 // const blackHx = Jimp.cssColorToHex("Black");
 // const whiteHx = Jimp.cssColorToHex("White");
 const nChrs = 40; 
