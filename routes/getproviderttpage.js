@@ -241,6 +241,18 @@ function pageJsonOmroepWestBuilder(ttpage) {
     };
     return pageJson;
 }
+function pageJsonOmroepLimburgBuilder(ttpage) {
+    console.log("make omroep west json")
+    pageJson = { 
+        "prevPage": "100",
+        "nextPage": "102",
+        "prevSubPage": "0",
+        "nextSubPage": "0",
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"190"},{"title":"sport","page":"600"},{"title":"service","page":"400"}],
+        "pagetxt": ttpage
+    };
+    return pageJson;
+}
 function pageJsonOmroepGelderlandBuilder(ttpage) {
     console.log("make omroep west json")
     pageJson = { 
@@ -340,6 +352,12 @@ const makeRequestFromOmroepGelderland = async (page) => {
     let url = "https://storage-gelderland.rgcdn.nl/teletext/" + pageImage;
     return await Jimp.read(url);
 }
+const makeRequestFromOmroepLimburg = async (page) => {
+    console.log("start omroep Limburg 1")
+    let pageImage = translatePageToPng(page);
+    let url = "http://vps01.l1.nl/teletext/L1/png/" + pageImage;
+    return await Jimp.read(url);
+}
 const makeRequestFromOmroepBrabant = async (page) => {
     console.log("start omroep brabant 1")
     let pageImage = translatePageToPng2(page);
@@ -380,6 +398,9 @@ const makeRequest = async (provider, page) => {
         return await makeRequestFromOmroepGelderland(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepGelderlandBuilder(response), errorPageTimeOut);
     };
     if (provider == 5 || provider == "5") {
+        return await makeRequestFromOmroepLimburg(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepLimburgBuilder(response), errorPageTimeOut);
+    };
+    if (provider == 6 || provider == "5") {
         return await makeRequestFromOmroepBrabant(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepBrabantBuilder(response), errorPageTimeOut);
     };
 };

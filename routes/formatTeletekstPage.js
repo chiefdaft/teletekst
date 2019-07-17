@@ -128,7 +128,8 @@ function formatTTPage(ttpage, page, provider, userAgent) {
       <option value="2" ' +  setSelectedOption(provider, "2") + '>InfoThuis</option> \
       <option value="3" ' +  setSelectedOption(provider, "3") + '>Omroep West</option> \
       <option value="4" ' +  setSelectedOption(provider, "4") + '>Omroep Gelderland</option> \
-      <!--<option value="5" ' +  setSelectedOption(provider, "5") + '>Omroep Brabant</option>--> \
+      <option value="5" ' +  setSelectedOption(provider, "5") + '>Omroep L1mburg</option> \
+      <!--<option value="6" ' +  setSelectedOption(provider, "6") + '>Omroep Brabant</option>--> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);

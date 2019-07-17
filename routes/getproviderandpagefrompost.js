@@ -43,7 +43,7 @@ module.exports = function(req, res, next) {
 	}
 	if (oldprovider != provider) {
 		req.body["page"] = "100";
-		if (provider > 2 && provider < 5) {
+		if (provider > 2 && provider < 6) {
 			req.body["subpage"] = "0";
 		} else {
 			req.body["subpage"] = "1";
