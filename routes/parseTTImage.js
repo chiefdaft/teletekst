@@ -1,49 +1,8 @@
 
 var Jimp = require('jimp');
-const hashMap = require('./json/hashmap.json');
-const text = "     Oeps, er ging iets verkeerd... \n\
-"+"      _     _     _  _     _     _\n\
-"+"  (_.' )  .' )  .' )( `.  ( `.  ( `._)\n\
-"+"     .' .' .' .' .'  `. `. `. `. `.\n\
-"+"    (_.' .' .' ,' .'`. `, `. `. `._)\n\
-"+"       .' .' ,' .'    `. `, `. `.\n\
-"+"     .' .' .' .'        `. `. `. `.\n\
-"+"    (_.' .' .'            `. `. `._)\n\
-"+"       .' .'                `. `.\n\
-"+"     .' .'                    `. `.\n\
-"+"   .' .'                        `. `.\n\
-"+"  (_.'        Helaas duurde      `._)\n\
-"+"   _          deze operatie          _\n\
-"+"  ( '.        langer dan          ,' )\n\
-"+"   '. '.      verwacht.         ,' ,'\n\
-"+"     '. '.                    ,' ,'\n\
-"+"     _ '. '.                ,' ,' _\n\
-"+"    ( '. '. '.            ,' ,' ,' )\n\
-"+"     '. '. '. '.        ,' ,' ,' ,'\n\
-"+"     _ '. '. `. '.    ,' ,` ,' ,' _\n\
-"+"    ( '. '. '. `. '.,' ,` ,' ,' ,' )\n\
-"+"   _ '. '. '. '. '.  ,' ,' ,' ,' ,' _\n\
-"+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
-"+" \n\
-" + "    nieuws   weer   sport   voetbal ";
-// const listChars = hashMap.listBlock12;
-// const listDoubleChars = hashMap.listBlock24;
-
-// function getCharByHash(hash) {
-//   return listChars.filter(
-//     function(listChars) {
-//       return listChars.hash == hash;
-//     }
-//   )
-// };
-// function getDoubleCharByHash(hash) {
-//   return listDoubleChars.filter(
-//     function(listDoubleChars) {
-//       return listDoubleChars.hash == hash;
-//     }
-//   )
-// };
-
+const hashMap = require('./json/hashmap2.json');
+// const blackHx = Jimp.cssColorToHex("Black");
+// const whiteHx = Jimp.cssColorToHex("White");
 const nChrs = 40; 
 
 ////////////////////////////////////////////////////
@@ -51,125 +10,133 @@ const nChrs = 40;
 //   (resolve, reject)
 module.exports = function (image) {
   return new Promise ((resolve, reject) => {
+
+  var text = "";
+  console.log("processing...")
+  let x =0; let y = 0; 
+  let imgWidth = image.bitmap.width;
+  let imgHeight = image.bitmap.height;
+  var nLines = (imgHeight > 300) ? 24 : 25;
+  const skipBlock = [ nLines * nChrs];
+  for (l = 0; l < nLines; l++) {
+    for (c = 0; c < nChrs; c++) {
+      skipBlock[l*c + c] = 0;
+    }
+  }
+  if (nLines == 25) {
+    listChars = hashMap.listBlock12;
+    listDoubleChars = hashMap.listBlock24;
+  } else {
+    listChars = hashMap.listBlock14;
+    listDoubleChars = hashMap.listBlock28;
+  }
   
-  // const blackHx = Jimp.cssColorToHex("Black");
-  // const whiteHx = Jimp.cssColorToHex("White");
-  // var text = "";
-  // console.log("processing...")
-  // let x =0; let y = 0; 
-  // let imgWidth = image.bitmap.width;
-  // let imgHeight = image.bitmap.height;
-  // var nLines = (imgHeight > 300) ? 24 : 25;
-  // const skipBlock = [ nLines * nChrs];
-  // for (l = 0; l < nLines; l++) {
-  //   for (c = 0; c < nChrs; c++) {
-  //     skipBlock[l*c + c] = 0;
-  //   }
-  // }
-  // if (nLines == 25) {
-  //   listChars = hashMap.listBlock12;
-  //   listDoubleChars = hashMap.listBlock24;
-  // } else {
-  //   listChars = hashMap.listBlock14;
-  //   listDoubleChars = hashMap.listBlock28;
-  // }
-  
-  // function getCharByHash(hash) {
-  //   return listChars.filter(
-  //     function(listChars) {
-  //       return listChars.hash == hash;
-  //     }
-  //   )
-  // };
-  // function getDoubleCharByHash(hash) {
-  //   return listDoubleChars.filter(
-  //     function(listDoubleChars) {
-  //       return listDoubleChars.hash == hash;
-  //     }
-  //   )
-  // };
-  // let charBlock = {"dimension": {"width": imgWidth/nChrs, "height": imgHeight/nLines }}
-  //    // console.log("color:", image.getPixelColor(x, y)); // returns the colour of that pixel e.g. 0xFFFFFFFF
-  //    // console.log("dimensions:", image.bitmap.width, 'x', image.bitmap.height);
-  //    // console.log("Block dimensions:", charBlock.dimension.width, 'x', charBlock.dimension.height);
-  //     let w = parseInt(charBlock.dimension.width); // long statement :-(
-  //     let h = parseInt(charBlock.dimension.height);
-  //     for (j = 0; j< nLines; j++) {
-  //     for (i = 0; i < nChrs; i++) {
-  //         let char = " "; // If block will be skipped a blank will be added anyway
-  //         if (!skipBlock[nChrs*j + i]) {
-  //         let imgBlock = image.clone();
+  function getCharByHash(hash) {
+    return listChars.filter(
+      function(listChars) {
+        return listChars.hash == hash;
+      }
+    )
+  };
+  function getDoubleCharByHash(hash) {
+    return listDoubleChars.filter(
+      function(listDoubleChars) {
+        return listDoubleChars.hash == hash;
+      }
+    )
+  };
+  var crc32 = (function()
+  {
+    var table = new Uint32Array(256);
+    // Pre-generate crc32 polynomial lookup table
+    // http://wiki.osdev.org/CRC32#Building_the_Lookup_Table
+    // ... Actually use Alex's because it generates the correct bit order
+    //     so no need for the reversal function
+    for(var i=256; i--;)
+    {
+        var tmp = i;
+        for(var k=8; k--;)
+        {
+            tmp = tmp & 1 ? 3988292384 ^ tmp >>> 1 : tmp >>> 1;
+        }
+        table[i] = tmp;
+    }
+    // crc32b
+    // Example input        : [97, 98, 99, 100, 101] (Uint8Array)
+    // Example output       : 2240272485 (Uint32)
+    return function( data )
+    {
+        var crc = -1; // Begin with all bits set ( 0xffffffff )
+
+        for(var i=0, l=data.length; i<l; i++)
+        {
+            crc = crc >>> 8 ^ table[ crc & 255 ^ data[i] ];
+        }
+        return (crc ^ -1) >>> 0; // Apply binary NOT
+    };
+  })();
+
+  let charBlock = {"dimension": {"width": imgWidth/nChrs, "height": imgHeight/nLines }}
+  let w = parseInt(charBlock.dimension.width); // long statement :-(
+  let h = parseInt(charBlock.dimension.height);
+  for (j = 0; j< nLines; j++) {
+    for (i = 0; i < nChrs; i++) {
+      let char = " "; // If block will be skipped a blank will be added anyway
+      if (!skipBlock[nChrs*j + i]) {
+        let y0 = j*h; let y1 = y0 + h; // vertical range of the character block in the image
+        let x0 = i*w; let x1 = x0 + w; // horizontal range of the character block in the image
+        let hexBlockPxByte = 0; //empty array for all pixels =bgColor (0) or != bgColor (1)
+        let blockByteMap =[];
+        // imgBlock.crop(i*w,  j*h, w , h );
+        let bgColorBlock = image.getPixelColor(x0,y0); // same for both character sizes
+        // // iterarate through the blocks height vertically
+        for (y = y0; y < y1; y++) {
+        //   // per line, iterate through the character blocks pixels horizontally
+          for (x = x0; x < x1; x++) {
+            let px = (image.getPixelColor(x, y) == bgColorBlock) ? 0: 1;
+            blockByteMap.push(px);
+          }
+        } // end looping through single character pixel block
+        let hash =  crc32( blockByteMap.join(" ") );
+        let hashMatch = getCharByHash(hash);
+        // let's try a double character block... (no match with single chr block)
+        // //----------------------------------
+         if (!hashMatch.length) {
+        //   // Double height characters (not necessary if there is only 1 row left)
           
-  //         imgBlock.crop(i*w,  j*h, w , h );
-  //         let colorBlock = imgBlock.getPixelColor(0,0); // same for both character sizes
-  //         // iterarate through the blocks height
-  //         for (y = 0; y < h; y++) {
-  //             // per line, iterate through the character blocks pixels
-  //             for (x = 0; x < w; x++) {
-  //             // console.log ("y:",y,", x:",x);
-  //             let colorPixel = imgBlock.getPixelColor(x, y)
-  //             if (colorPixel == colorBlock) {
-  //                 imgBlock.setPixelColor(blackHx, x, y);
-  //             } else {
-  //                 imgBlock.setPixelColor(whiteHx, x, y);
-  //             }
-  //             }
-  //         } // end looping through single character pixel block
-  //         let hash = imgBlock.hash();
-  //         let hashMatch = getCharByHash(hash);
-  //         // letś try a double character block... (no match with single chr block)
-  //         if (!hashMatch.length) {
-  //             // Double height characters (not necessary if there is only 1 row left)
-              
-  //             if (j < nLines - 1) {
-  //             let img2Block = image.clone();
-  //             img2Block.crop(i*w,  j*h, w , 2*h );
-              
-  //             for (y = 0; y < 2*h; y++) {
-  //                 if (j < nLines - 1) {
-  //                 for (x = 0; x < w; x++) {
-  //                     // console.log ("y:",y,", x:",x);
-  //                     let color2Pixel = img2Block.getPixelColor(x, y)
-  //                     if (color2Pixel == colorBlock) {
-  //                     img2Block.setPixelColor(blackHx, x, y);
-  //                     } else {
-  //                     img2Block.setPixelColor(whiteHx, x, y);
-  //                     }
-  //                 }
-  //                 }
-  //             }
-  //             let hash2 = img2Block.hash();
-  //             let hashMatch2 = getDoubleCharByHash(hash2);
-  //             if (!hashMatch2.length) {
-  //                 imgBlock.write("../../dump/" + j + "-" + i + "_block.png");
-  //                 img2Block.write("../../dump/" + j + "-" + i + "_2block.png");
-  //                 char = '=';
-  //                 // console.log("Hash," + j + "-" + i + "_1block.png", hash, hashMatch);
-  //                 // console.log("Hash2," + j + "-" + i + "_2block.png", hash2, hashMatch2);
-  //             } else {
-  //                 char = hashMatch2[0].char;
-  //                 skipBlock[(j+1)*nChrs +i] = 1;
-  //             }
-  //             }
-  //         } else {
-  //             char = hashMatch[0].char;
-  //         }
-  //         } 
-  //         // If this block was skipped a blank will be returned
-  //         text += char;
-  //     }
-  //     text += "\n";
-  //     }
-  //     //console.log(text);
-      if (0) {
+          if (j < nLines - 1) {
+            let y2 = y1 + h;
+            for (y = y1; y < y2; y++) {
+              if (j < nLines - 1) {
+                for (x = x0; x < x1; x++) {
+                  let px = (image.getPixelColor(x, y) == bgColorBlock) ? 0: 1;
+                  blockByteMap.push(px);
+                }
+              }
+            }
+            let hash2 =  crc32( blockByteMap.join(" ") );
+            let hashMatch2 = getDoubleCharByHash(hash2);
+            if (!hashMatch2.length) {
+              char = ' ';
+            } else {
+              char = hashMatch2[0].char;
+              skipBlock[(j+1)*nChrs +i] = 1;
+            }
+          }
+        } else {
+          char = hashMatch[0].char;
+        }
+      }
+          // If this block was skipped a blank will be returned
+          text += char;
+      }
+      text += "\n";
+      }
+      //console.log(text);
+      if (text.length < nChrs*nLines) {
         reject( "De Teletekst pagina kon niet verwerkt worden.")
       } else {
         resolve(text);
       }
   }
 )}
-//////////////////////////////////////////////////////////////////////
-//let url = "https://storage-gelderland.rgcdn.nl/teletext/415s00.png";
-// module.exports = async function (url) {
-//        Jimp.read(url)
-//   }
