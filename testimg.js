@@ -4,55 +4,36 @@ const fs = require('fs');
 const got = require('got');
 ////const sharp = require('sharp');
 var Jimp = require('jimp');
-const hashMap = require('./routes/json/hashmap2.json');
-// const listChars = hashMap.listBlock14;
-// const listDoubleChars = hashMap.listBlock28;
-
-// function getCharByHash(hash) {
-//   return listChars.filter(
-//     function(listChars) {
-//       return listChars.hash == hash;
-//     }
-//   )
-// };
-// function getDoubleCharByHash(hash) {
-//   return listDoubleChars.filter(
-//     function(listDoubleChars) {
-//       return listDoubleChars.hash == hash;
-//     }
-//   )
-// };
+const hashMap = require('./routes/json/hashmap.json');
 
 const nChrs = 40; 
-//var nLines = 24;
 
-
-// function initSkipBlocks(nLines,nChrs) {
-//   const skipBlock = [ nLines * nChrs];
-//   for (l = 0; l < nLines; l++) {
-//     for (c = 0; c < nChrs; c++) {
-//       skipBlock[l*c + c] = 0;
-//     }
-//   }
-// }
-
-const blackHx = Jimp.cssColorToHex("Black");
-const whiteHx = Jimp.cssColorToHex("White");
+// const blackHx = Jimp.cssColorToHex("Black");
+// const whiteHx = Jimp.cssColorToHex("White");
 //console.log("Black:", blackHx);
 //var text = "";
-//let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/103-01.gif";
-//let url = "https://storage-brabant.rgcdn.nl/teletext/290_0001.png";
+//let url = "https://teletekst.rtvoost.nl/teletekst/100.png";
+////let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/103-01.gif";
+let url = "https://storage-brabant.rgcdn.nl/teletext/698_0001.png"; //480 × 336 pixels
 //let url = "https://storage-w.rgcdn.nl/teletext/100s00.png";
-//let url = "http://vps01.l1.nl/teletext/L1/png/101s00.png";
-let url = "https://storage-gelderland.rgcdn.nl/teletext/263s00.png";
+//let url = "http://vps01.l1.nl/teletext/L1/png/100s00.png";
+// let url = "https://storage-gelderland.rgcdn.nl/teletext/281s00.png";
 //let url = "http://localhost/GIFE0D2.tmp.gif";
+const debug = 1;
 Jimp.read(url, function (err, image) {
   var text = "";
   console.log("processing...")
   let x =0; let y = 0;
   let imgWidth = image.bitmap.width;
   let imgHeight = image.bitmap.height;
-  var nLines = (imgHeight > 300) ? 24 : 25;
+  var nLines = 1;
+  switch (imgHeight) {
+    case 300: nLines = 25;
+              break;
+    case 336: nLines = 24;
+              break;
+  }
+  //var nLines = (imgHeight > 300) ? 24 : 25;
   const skipBlock = [ nLines * nChrs];
   for (l = 0; l < nLines; l++) {
     for (c = 0; c < nChrs; c++) {
@@ -165,19 +146,20 @@ Jimp.read(url, function (err, image) {
               let hash2 =  crc32( blockByteMap.join(" ") );
               let hashMatch2 = getDoubleCharByHash(hash2);
               if (!hashMatch2.length) {
-                // let imgBlock = image.clone();
-                // imgBlock.crop(i*w,  j*h, w , h );
-                // imgBlock.write("../../dump/" + j + "-" + i + "_Sblock.png");
-                let imgBlock2 = image.clone();
-                imgBlock2.crop(i*w,  j*h, w , 2*h );
-                imgBlock2.write("../../dump/" + j + "-" + i + "_Dblock.png");
-              //  console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
-                console.log( j + "-" + i + "_Dblock.png,\t{ \"hash\": \"" + hash2 + "\", \"char\": \"==\" },");
-          //       console.log("hexBlockBytes, " + j + "-" + i + "_Dblock.png, { \"hash\": \"" + hash2 + "\", \"char\": \"==\" }");
+                if (debug == 1) {
+                  let imgBlock = image.clone();
+                  imgBlock.crop(i*w,  j*h, w , h );
+                  imgBlock.write("../../dump/" + j + "-" + i + "_Sblock.png");
+                  console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
+                }
+                if (debug == 2) {
+                  let imgBlock2 = image.clone();
+                  imgBlock2.crop(i*w,  j*h, w , 2*h );
+                  imgBlock2.write("../../dump/" + j + "-" + i + "_Dblock.png");
+                  console.log( j + "-" + i + "_Dblock.png,\t{ \"hash\": \"" + hash2 + "\", \"char\": \"==\" },");
+                }
                 char = '=';
           //-----------------
-          //       console.log("Hash," + j + "-" + i + "_1block.png", hash, hashMatch);
-          //       console.log("Hash2," + j + "-" + i + "_2block.png", hash2, hashMatch2);
               } else {
                 char = hashMatch2[0].char;
                 skipBlock[(j+1)*nChrs +i] = 1;

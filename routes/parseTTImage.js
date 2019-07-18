@@ -16,7 +16,13 @@ module.exports = function (image) {
   let x =0; let y = 0; 
   let imgWidth = image.bitmap.width;
   let imgHeight = image.bitmap.height;
-  var nLines = (imgHeight > 300) ? 24 : 25;
+  var nLines = 1;
+  switch (imgHeight) {
+    case 300: nLines = 25;
+              break;
+    case 336: nLines = 24;
+              break;
+  }
   const skipBlock = [ nLines * nChrs];
   for (l = 0; l < nLines; l++) {
     for (c = 0; c < nChrs; c++) {

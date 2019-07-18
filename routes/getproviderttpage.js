@@ -209,8 +209,8 @@ function pageJsonRijnmondBuilder(ttpage) {
     pageJson = { 
         "prevPage": pageLinks[0],
         "nextPage": pageLinks[1],
-        "prevSubPage": "1",
-        "nextSubPage": "1",
+        "prevSubPage": pageLinks[2],
+        "nextSubPage": pageLinks[3],
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"120"},{"title":"verkeer","page":"180"}],
         "pagetxt": cleanUpRijnmondTTBody(ttpage)
     };
@@ -234,8 +234,8 @@ function pageJsonOmroepWestBuilder(ttpage) {
     pageJson = { 
         "prevPage": "100",
         "nextPage": "101",
-        "prevSubPage": "0",
-        "nextSubPage": "0",
+        "prevSubPage": "102",
+        "nextSubPage": "103",
         "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"weer","page":"151"}],
         "pagetxt": ttpage
     };
@@ -246,8 +246,8 @@ function pageJsonOmroepLimburgBuilder(ttpage) {
     pageJson = { 
         "prevPage": "100",
         "nextPage": "102",
-        "prevSubPage": "0",
-        "nextSubPage": "0",
+        "prevSubPage": "100",
+        "nextSubPage": "102",
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"190"},{"title":"sport","page":"600"},{"title":"service","page":"400"}],
         "pagetxt": ttpage
     };
@@ -258,8 +258,8 @@ function pageJsonOmroepGelderlandBuilder(ttpage) {
     pageJson = { 
         "prevPage": "100",
         "nextPage": "102",
-        "prevSubPage": "0",
-        "nextSubPage": "0",
+        "prevSubPage": "100",
+        "nextSubPage": "102",
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"171"},{"title":"sport","page":"200"},{"title":"verkeer","page":"175"}],
         "pagetxt": ttpage
     };
