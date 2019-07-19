@@ -14,11 +14,12 @@ const nChrs = 40;
 //var text = "";
 //let url = "https://teletekst.rtvoost.nl/teletekst/100.png";
 ////let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/103-01.gif";
-let url = "https://storage-brabant.rgcdn.nl/teletext/698_0001.png"; //480 × 336 pixels
+//let url = "https://storage-brabant.rgcdn.nl/teletext/602_0001.png"; //480 × 336 pixels
 //let url = "https://storage-w.rgcdn.nl/teletext/100s00.png";
 //let url = "http://vps01.l1.nl/teletext/L1/png/100s00.png";
-// let url = "https://storage-gelderland.rgcdn.nl/teletext/281s00.png";
+let url = "https://storage-gelderland.rgcdn.nl/teletext/121s00.png";
 //let url = "http://localhost/GIFE0D2.tmp.gif";
+//let url = "https://teletekst.rtvoost.nl/teletekst/300.png";
 const debug = 1;
 Jimp.read(url, function (err, image) {
   var text = "";
@@ -29,8 +30,16 @@ Jimp.read(url, function (err, image) {
   var nLines = 1;
   switch (imgHeight) {
     case 300: nLines = 25;
+              listChars = hashMap.listBlock12;
+              listDoubleChars = hashMap.listBlock24;
               break;
     case 336: nLines = 24;
+              listChars = hashMap.listBlock14;
+              listDoubleChars = hashMap.listBlock28;
+              break;
+    case 345: nLines = 23;
+              listChars = hashMap.listBlock15;
+              listDoubleChars = hashMap.listBlock30;
               break;
   }
   //var nLines = (imgHeight > 300) ? 24 : 25;
@@ -40,13 +49,13 @@ Jimp.read(url, function (err, image) {
       skipBlock[l*c + c] = 0;
     }
   }
-  if (nLines == 25) {
-    listChars = hashMap.listBlock12;
-    listDoubleChars = hashMap.listBlock24;
-  } else {
-    listChars = hashMap.listBlock14;
-    listDoubleChars = hashMap.listBlock28;
-  }
+  // if (nLines == 25) {
+  //   listChars = hashMap.listBlock12;
+  //   listDoubleChars = hashMap.listBlock24;
+  // } else {
+  //   listChars = hashMap.listBlock14;
+  //   listDoubleChars = hashMap.listBlock28;
+  // }
   
   function getCharByHash(hash) {
     return listChars.filter(

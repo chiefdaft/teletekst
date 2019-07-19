@@ -19,8 +19,16 @@ module.exports = function (image) {
   var nLines = 1;
   switch (imgHeight) {
     case 300: nLines = 25;
+              listChars = hashMap.listBlock12;
+              listDoubleChars = hashMap.listBlock24;
               break;
     case 336: nLines = 24;
+              listChars = hashMap.listBlock14;
+              listDoubleChars = hashMap.listBlock28;
+              break;
+    case 345: nLines = 23;
+              listChars = hashMap.listBlock15;
+              listDoubleChars = hashMap.listBlock30;
               break;
   }
   const skipBlock = [ nLines * nChrs];
@@ -29,14 +37,6 @@ module.exports = function (image) {
       skipBlock[l*c + c] = 0;
     }
   }
-  if (nLines == 25) {
-    listChars = hashMap.listBlock12;
-    listDoubleChars = hashMap.listBlock24;
-  } else {
-    listChars = hashMap.listBlock14;
-    listDoubleChars = hashMap.listBlock28;
-  }
-  
   function getCharByHash(hash) {
     return listChars.filter(
       function(listChars) {

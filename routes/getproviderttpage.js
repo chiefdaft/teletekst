@@ -266,13 +266,25 @@ function pageJsonOmroepGelderlandBuilder(ttpage) {
     return pageJson;
 }
 function pageJsonOmroepBrabantBuilder(ttpage) {
-    console.log("make omroep brababnt json")
+    console.log("make omroep brabant json")
     pageJson = { 
         "prevPage": "100",
         "nextPage": "102",
         "prevSubPage": "1",
         "nextSubPage": "1",
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"698"},{"title":"verkeer","page":"190"}],
+        "pagetxt": ttpage
+    };
+    return pageJson;
+}
+function pageJsonRTVOostBuilder(ttpage) {
+    console.log("make RTV Oost json")
+    pageJson = { 
+        "prevPage": "100",
+        "nextPage": "102",
+        "prevSubPage": "1",
+        "nextSubPage": "1",
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"190"},{"title":"sport","page":"300"},{"title":"voetbal","page":"800"}],
         "pagetxt": ttpage
     };
     return pageJson;
@@ -340,6 +352,24 @@ function translatePageToPng2(page) {
     }
     return subpageOB + ".png"
 }
+function translatePageToPng3(page) {
+    let pageno = page.substr(0,3);
+    // console.log("pageno:",pageno);
+    let subpageOW = pageno;
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        if (subpageno > 1) {
+            subpageno--;
+            if (parseInt(subpageno) < 10) {
+                subpageOW += "S0" + subpageno
+            } else {
+                subpageOW += "S" + subpageno
+            }
+        }
+    } 
+    // console.log("subpage:",subpageOW);
+    return subpageOW + ".png"
+}
 const makeRequestFromOmroepWest = async (page) => {
     console.log("start omroep west 1")
     let pageImage = translatePageToPng(page);
@@ -362,6 +392,12 @@ const makeRequestFromOmroepBrabant = async (page) => {
     console.log("start omroep brabant 1")
     let pageImage = translatePageToPng2(page);
     let url = "https://storage-brabant.rgcdn.nl/teletext/" + pageImage;
+    return await Jimp.read(url);
+}
+const makeRequestFromRTVOost= async (page) => {
+    console.log("start RTV Oost 1")
+    let pageImage = translatePageToPng3(page);
+    let url = "https://teletekst.rtvoost.nl/teletekst/" + pageImage;
     return await Jimp.read(url);
 }
 const makeRequest = async (provider, page) => {
@@ -400,8 +436,11 @@ const makeRequest = async (provider, page) => {
     if (provider == 5 || provider == "5") {
         return await makeRequestFromOmroepLimburg(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepLimburgBuilder(response), errorPageTimeOut);
     };
-    if (provider == 6 || provider == "5") {
+    if (provider == 6 || provider == "6") {
         return await makeRequestFromOmroepBrabant(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonOmroepBrabantBuilder(response), errorPageTimeOut);
+    };
+    if (provider == 7 || provider == "7") {
+        return await makeRequestFromRTVOost(page).then(image => parseTTImage(image), errorPageTimeOut).then(response => pageJsonRTVOostBuilder(response), errorPageTimeOut);
     };
 };
 module.exports = function (req, res, next) {
