@@ -73,7 +73,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     str = links.reduce(fastRefLineBuilder,str);
     //console.log("hopsa: ", str);
     // repair <pre> indentation of teh firstline
-    str = str.replace('\n', '</p>\n<p>');
+    str = str.replace('\n', '</p>\n <div id="swipezone"><p>');
     //str = '<p class="firstline">' + str;
     // replace newlines with <br>
     let ref = /(\n)+/g;
@@ -86,7 +86,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
            <title>Minimalist Teletekst Display</title>\
             </header><body><div class="content"><pre><p class="firstline">&nbsp \
             ' + str + '\
-            </p></pre>\
+            </p><div id="swipezone"></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \
                 ' + pageForm(page, provider) + '\
                 </div>\
@@ -99,6 +99,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                </span> \
                </div>\
                ' + changeProviderScript() + ' \
+               ' + changePageBySlideScript() + '\
                </body></html>';  
         return str;
       }
@@ -114,7 +115,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
   }
   function pageForm(page, provider) {
     //console.log("Pageform function!", page);
-    let form = '<form class="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
+    let form = '<form id="select-page-form" action="" method="post" enctype="application/x-www-form-urlencoded">\
     <input class="oldprovider" name="oldprovider" id="oldprovider" type="number" value="' + provider + '"> \
     <label>Pagina</label>\
     <input class="page-input" type="number" name="page" id="pagenumber" maxlength="3" required pattern="([1-8][0-9][0-9])" value="' + page.substr(0,3) + '">\
@@ -167,4 +168,68 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     //console.log("pageNavButtons XXX!!", ttpage.nextPage);
     return pagelinks.reduce(buttonList2Builder, "") ;
   }
+  function changePageBySlideScript() {
+    let scr = "<script>\
+      function swipedetect(el, callback){\
+      var touchsurface = el,\
+      swipedir,\
+      startX,\
+      startY,\
+      distX,\
+      distY,\
+      threshold = 150, \
+      restraint = 100, \
+      allowedTime = 300, \
+      elapsedTime,\
+      startTime,\
+      handleswipe = callback || function(swipedir){}; \
+      touchsurface.addEventListener(\"touchstart\", function(e){\
+          var touchobj = e.changedTouches[0] ;\
+          swipedir = \"none\" ;\
+          dist = 0 ;\
+          startX = touchobj.pageX ;\
+          startY = touchobj.pageY ;\
+          startTime = new Date().getTime() ;\
+          e.preventDefault() ;\
+      }, false); \
+      touchsurface.addEventListener(\"touchmove\", function(e){ \
+          e.preventDefault() ;\
+      }, false);\
+      touchsurface.addEventListener(\"touchend\", function(e){ \
+          var touchobj = e.changedTouches[0] ;\
+          distX = touchobj.pageX - startX ;\
+          distY = touchobj.pageY - startY ;\
+          elapsedTime = new Date().getTime() - startTime ;\
+          if (elapsedTime <= allowedTime){ \
+              if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){ \
+                  swipedir = (distX < 0)? 'left' : 'right' ;\
+              }\
+              else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint){ \
+                  swipedir = (distY < 0)? 'up' : 'down' ;\
+              }\
+          }\
+          handleswipe(swipedir) ;\
+          e.preventDefault() ;\
+      }, false); \
+  } \
+  var el = document.getElementById('swipezone'); \
+  swipedetect(el, function(swipedir){ \
+      console.log('Detected swipe ', swipedir);\
+      let page = parseInt(document.getElementById('pagenumber').value);\
+      let subpage = parseInt(document.getElementById('subpagenumber').value);\
+      switch (swipedir) {\
+        case 'left': document.getElementById('pagenumber').value = (page < 899) ? page + 1 : page;\
+                    break;\
+        case 'right': document.getElementById('pagenumber').value = (page > 100) ? page - 1 : page ;\
+                    break;\
+        case 'up': document.getElementById('subpagenumber').value = subpage  + 1;\
+                    break;\
+        case 'down': document.getElementById('subpagenumber').value = (subpage > 1) ? subpage - 1 : subpage ;\
+                    break;\
+      }\
+      document.getElementById(\"select-page-form\").submit();\
+  });\
+  </script>"
   
+    return scr;
+  }
