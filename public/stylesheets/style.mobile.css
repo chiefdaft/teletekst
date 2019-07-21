@@ -49,6 +49,7 @@ pre {
   /*top: 410px; 
   left: 8px;*/
   text-align: center;
+  height: 65px;
 } 
 .navigationbox { 
   background-color: var(--main-box-bg-color);

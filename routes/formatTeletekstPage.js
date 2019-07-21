@@ -72,8 +72,8 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     };
     str = links.reduce(fastRefLineBuilder,str);
     //console.log("hopsa: ", str);
-    // repair <pre> indentation of teh firstline
-    str = str.replace('\n', '</p>\n <div id="swipezone"><p>');
+    // repair <pre> indentation of the firstline
+    str = str.replace('\n', '</p>\n<div  id="swipezone"><p>');
     //str = '<p class="firstline">' + str;
     // replace newlines with <br>
     let ref = /(\n)+/g;
@@ -86,7 +86,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
            <title>Minimalist Teletekst Display</title>\
             </header><body><div class="content"><pre><p class="firstline">&nbsp \
             ' + str + '\
-            </p><div id="swipezone"></pre>\
+            </p></div></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \
                 ' + pageForm(page, provider) + '\
                 </div>\
@@ -177,8 +177,8 @@ function formatTTPage(ttpage, page, provider, userAgent) {
       startY,\
       distX,\
       distY,\
-      threshold = 150, \
-      restraint = 100, \
+      threshold = 100, \
+      restraint = 750, \
       allowedTime = 300, \
       elapsedTime,\
       startTime,\
@@ -215,6 +215,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
   var el = document.getElementById('swipezone'); \
   swipedetect(el, function(swipedir){ \
       console.log('Detected swipe ', swipedir);\
+      if (swipedir != 'none') {\
       let page = parseInt(document.getElementById('pagenumber').value);\
       let subpage = parseInt(document.getElementById('subpagenumber').value);\
       switch (swipedir) {\
@@ -228,6 +229,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                     break;\
       }\
       document.getElementById(\"select-page-form\").submit();\
+    }\
   });\
   </script>"
   

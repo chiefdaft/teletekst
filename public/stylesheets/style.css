@@ -57,6 +57,7 @@ pre {
   position: relative;
   top: 0px; 
   border-bottom: 5px;
+  height: 152px;
 } 
 .navigationbox { 
   background-color: var(--main-box-bg-color);
