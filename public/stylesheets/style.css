@@ -47,7 +47,7 @@ pre {
   margin: auto;
 
 } */
-.buttonbox { 
+.buttonbox {
   background-color: var(--main-box-bg-color);
   /*width: 332px;*/
   border: 10px solid var(--main-box-border-color);
