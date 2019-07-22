@@ -8,19 +8,15 @@ const hashMap = require('./routes/json/hashmap.json');
 
 const nChrs = 40; 
 
-// const blackHx = Jimp.cssColorToHex("Black");
-// const whiteHx = Jimp.cssColorToHex("White");
-//console.log("Black:", blackHx);
-//var text = "";
 //let url = "https://teletekst.rtvoost.nl/teletekst/100.png";
 ////let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/103-01.gif";
-//let url = "https://storage-brabant.rgcdn.nl/teletext/602_0001.png"; //480 × 336 pixels
-//let url = "https://storage-w.rgcdn.nl/teletext/100s00.png";
+let url = "https://storage-brabant.rgcdn.nl/teletext/109_0001.png"; //480 × 336 pixels (12/24)
+//let url = "https://storage-w.rgcdn.nl/teletext/105s00.png";
 //let url = "http://vps01.l1.nl/teletext/L1/png/100s00.png";
-let url = "https://storage-gelderland.rgcdn.nl/teletext/121s00.png";
+// let url = "https://storage-gelderland.rgcdn.nl/teletext/121s00.png";
 //let url = "http://localhost/GIFE0D2.tmp.gif";
-//let url = "https://teletekst.rtvoost.nl/teletekst/300.png";
-const debug = 1;
+//let url = "https://teletekst.rtvoost.nl/teletekst/182.png"; // h = 345
+const debug = 2;
 Jimp.read(url, function (err, image) {
   var text = "";
   console.log("processing...")
@@ -30,14 +26,17 @@ Jimp.read(url, function (err, image) {
   var nLines = 1;
   switch (imgHeight) {
     case 300: nLines = 25;
+              console.log("Use listBlock12/24");
               listChars = hashMap.listBlock12;
               listDoubleChars = hashMap.listBlock24;
               break;
     case 336: nLines = 24;
+              console.log("Use listBlock14/28");
               listChars = hashMap.listBlock14;
               listDoubleChars = hashMap.listBlock28;
               break;
     case 345: nLines = 23;
+              console.log("Use listBlock15/30");
               listChars = hashMap.listBlock15;
               listDoubleChars = hashMap.listBlock30;
               break;
@@ -49,13 +48,6 @@ Jimp.read(url, function (err, image) {
       skipBlock[l*c + c] = 0;
     }
   }
-  // if (nLines == 25) {
-  //   listChars = hashMap.listBlock12;
-  //   listDoubleChars = hashMap.listBlock24;
-  // } else {
-  //   listChars = hashMap.listBlock14;
-  //   listDoubleChars = hashMap.listBlock28;
-  // }
   
   function getCharByHash(hash) {
     return listChars.filter(
@@ -167,6 +159,7 @@ Jimp.read(url, function (err, image) {
                   imgBlock2.write("../../dump/" + j + "-" + i + "_Dblock.png");
                   console.log( j + "-" + i + "_Dblock.png,\t{ \"hash\": \"" + hash2 + "\", \"char\": \"==\" },");
                 }
+                
                 char = '=';
           //-----------------
               } else {
@@ -176,6 +169,12 @@ Jimp.read(url, function (err, image) {
             }
           } else {
             char = hashMatch[0].char;
+          }
+          if (j == 22 && i == 35) {
+            let imgBlock = image.clone();
+            imgBlock.crop(i*w,  j*h, w , h );
+            imgBlock.write("../../dump/" + j + "-" + i + "_Sblock.png");
+            console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
           }
         } 
         // If this block was skipped a blank will be returned

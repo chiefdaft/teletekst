@@ -1,15 +1,16 @@
 :root {
   --main-box-bg-color: rgb(48, 50, 82); 
   --main-box-border-color: rgb(141, 156, 154);
-  --main-text-color: #00ffff;
-  --main-text-color-link: #a3f4ff;
+  --main-text-color: #b7ffc1;
+  --main-text-color-link: #b8f7ff;
   --body-bg-color: whitesmoke;
 }
 
 body { 
   padding: 0px;
   font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background-color: var(--body-bg-color); 
+  /* background-color: var(--body-bg-color); */
+  background: linear-gradient(to bottom, var(--main-text-color) 0%,var(--main-box-bg-color) 100%)
 } 
 .content {
   max-width: 500px;
@@ -109,7 +110,7 @@ button {
   display: none;
 }
 .page-input {
-  width: 56px;
+  width: 54px;
   height: 32px;
   background: Gray;
   color: White;

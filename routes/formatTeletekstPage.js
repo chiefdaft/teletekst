@@ -177,8 +177,8 @@ function formatTTPage(ttpage, page, provider, userAgent) {
       startY,\
       distX,\
       distY,\
-      threshold = 100, \
-      restraint = 750, \
+      threshold = 90, \
+      restraint = 75, \
       allowedTime = 300, \
       elapsedTime,\
       startTime,\
@@ -190,11 +190,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
           startX = touchobj.pageX ;\
           startY = touchobj.pageY ;\
           startTime = new Date().getTime() ;\
-          e.preventDefault() ;\
-      }, false); \
-      touchsurface.addEventListener(\"touchmove\", function(e){ \
-          e.preventDefault() ;\
-      }, false);\
+      }, {passive: true}, {useCapture : false}); \
       touchsurface.addEventListener(\"touchend\", function(e){ \
           var touchobj = e.changedTouches[0] ;\
           distX = touchobj.pageX - startX ;\
@@ -209,12 +205,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
               }\
           }\
           handleswipe(swipedir) ;\
-          e.preventDefault() ;\
-      }, false); \
+          if (swipedir != 'none') {\
+            e.preventDefault() ;\
+          }\
+      }, {passive: true}, {useCapture : false}); \
   } \
   var el = document.getElementById('swipezone'); \
   swipedetect(el, function(swipedir){ \
-      console.log('Detected swipe ', swipedir);\
+      console.log('Detected swipe on ', el, swipedir);\
       if (swipedir != 'none') {\
       let page = parseInt(document.getElementById('pagenumber').value);\
       let subpage = parseInt(document.getElementById('subpagenumber').value);\
