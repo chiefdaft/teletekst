@@ -30,7 +30,7 @@ pre {
   background-color: var(--main-box-bg-color);
   border-bottom: 10px solid var(--main-box-border-color);
   border-top: 10px solid var(--main-box-border-color);
-  /* width: 374px; */
+  width: 394px;
   /* border: 10px solid var(--main-box-border-color); */
   /*padding: 10px;  */
 }
