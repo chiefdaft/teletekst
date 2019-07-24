@@ -1,16 +1,12 @@
 
 var Jimp = require('jimp');
 const hashMap = require('./json/hashmap.json');
-// const blackHx = Jimp.cssColorToHex("Black");
-// const whiteHx = Jimp.cssColorToHex("White");
 const nChrs = 40; 
 
-////////////////////////////////////////////////////
-// module.exports =  image => new Promise (
-//   (resolve, reject)
-module.exports = function (image) {
-  return new Promise ((resolve, reject) => {
-
+module.exports = function (img) {
+return new Promise ((resolve, reject) => {
+  var page = img.page;
+  var image = img.image; 
   var text = "";
   console.log("processing...")
   let x =0; let y = 0; 
@@ -142,7 +138,7 @@ module.exports = function (image) {
       if (text.length < nChrs*nLines) {
         reject( "De Teletekst pagina kon niet verwerkt worden.")
       } else {
-        resolve(text);
+        resolve({"ttext": text, "page": page});
       }
   }
 )}

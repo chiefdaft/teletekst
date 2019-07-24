@@ -191,6 +191,9 @@ function formatTTPage(ttpage, page, provider, userAgent) {
           startY = touchobj.pageY ;\
           startTime = new Date().getTime() ;\
       }, {passive: true}, {useCapture : false}); \
+      touchsurface.addEventListener(\"touchmove\", function(e){\
+        e.preventDefault();\
+      }, false);\
       touchsurface.addEventListener(\"touchend\", function(e){ \
           var touchobj = e.changedTouches[0] ;\
           distX = touchobj.pageX - startX ;\
