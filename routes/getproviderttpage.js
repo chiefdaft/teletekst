@@ -20,7 +20,7 @@ const pageNotFound = "     Oeps, er ging iets verkeerd... \n\
 "+"     .' .'                    `. `.\n\
 "+"   .' .'                        `. `.\n\
 "+"  (_.'          Helaas is         `._)\n\
-"+"   _           deze pagina          _\n\
+"+"   _           pagina xxx           _\n\
 "+"  ( '.        niet gevonden.      ,' )\n\
 "+"   '. '.                        ,' ,'\n\
 "+"     '. '.                    ,' ,'\n\
@@ -231,11 +231,12 @@ function pageJsonRijnmondBuilder(ttpage) {
   }
 function pageJsonOmroepWestBuilder(ttext, page) {
     console.log("make omroep west json", page)
+    let pageLinksArray = createFastTextLinks(page);
     pageJson = { 
-        "prevPage": (parseInt(page) <= 101) ? "100" : parseInt(page) - 1,
-        "nextPage": (parseInt(page) >= 899) ? "100" : parseInt(page) + 1,
-        "prevSubPage": page + "-1",
-        "nextSubPage": page + "-2",
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
         "fastTextLinks": [{"title":"overzicht","page":"100"},{"title":"nieuws","page":"101"},{"title":"sport","page":"601"},{"title":"weer","page":"151"}],
         "pagetxt": ttext
     };
@@ -243,11 +244,12 @@ function pageJsonOmroepWestBuilder(ttext, page) {
 }
 function pageJsonOmroepLimburgBuilder(ttext, page) {
     console.log("make omroep limburg json", page)
+    let pageLinksArray = createFastTextLinks(page);
     pageJson = { 
-        "prevPage": (parseInt(page) <= 101) ? "100" : parseInt(page) - 1,
-        "nextPage": (parseInt(page) >= 899) ? "100" : parseInt(page) + 1,
-        "prevSubPage": page + "-1",
-        "nextSubPage": page + "-2",
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"190"},{"title":"sport","page":"600"},{"title":"service","page":"400"}],
         "pagetxt": ttext
     };
@@ -255,11 +257,12 @@ function pageJsonOmroepLimburgBuilder(ttext, page) {
 }
 function pageJsonOmroepGelderlandBuilder(ttext, page) {
     console.log("make omroep gelderland json", page)
+    let pageLinksArray = createFastTextLinks(page);
     pageJson = { 
-        "prevPage": (parseInt(page) <= 101) ? "100" : parseInt(page) - 1,
-        "nextPage": (parseInt(page) >= 899) ? "100" : parseInt(page) + 1,
-        "prevSubPage": page + "-1",
-        "nextSubPage": page + "-2",
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"171"},{"title":"sport","page":"200"},{"title":"verkeer","page":"175"}],
         "pagetxt": ttext
     };
@@ -267,11 +270,12 @@ function pageJsonOmroepGelderlandBuilder(ttext, page) {
 }
 function pageJsonOmroepBrabantBuilder(ttext, page) {
     console.log("make omroep brabant json", page)
+    let pageLinksArray = createFastTextLinks(page);
     pageJson = { 
-        "prevPage": (parseInt(page) <= 101) ? "100" : parseInt(page) - 1,
-        "nextPage": (parseInt(page) >= 899) ? "100" : parseInt(page) + 1,
-        "prevSubPage": page + "-1",
-        "nextSubPage": page + "-2",
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"170"},{"title":"sport","page":"698"},{"title":"verkeer","page":"190"}],
         "pagetxt": ttext
     };
@@ -279,15 +283,35 @@ function pageJsonOmroepBrabantBuilder(ttext, page) {
 }
 function pageJsonRTVOostBuilder(ttext, page) {
     console.log("make RTV Oost json", page)
+    let pageLinksArray = createFastTextLinks(page);
     pageJson = { 
-        "prevPage": (parseInt(page) <= 101) ? "100" : parseInt(page) - 1,
-        "nextPage": (parseInt(page) >= 899) ? "100" : parseInt(page) + 1,
-        "prevSubPage": page + "-1",
-        "nextSubPage": page + "-2",
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"190"},{"title":"sport","page":"300"},{"title":"voetbal","page":"800"}],
         "pagetxt": ttext
     };
     return pageJson;
+}
+function createFastTextLinks(page) {
+    let pageno = page.substr(0,3);
+    let prevPage = (parseInt(pageno) <= 101) ? "100" : parseInt(pageno) - 1;
+    let nextPage = (parseInt(pageno) >= 899) ? "100" : parseInt(pageno) + 1;
+        // "prevSubPage": page + "-1",
+        // "nextSubPage": page + "-2",
+    let subpageno = "1"
+    if (page.indexOf("-") == 3) {
+        subpageno = page.substring(4,page.length);
+    }
+    //console.log("subpage:", subpageno);
+    let subpageUp = parseInt(subpageno) + 1;
+    let subpageDown = (parseInt(subpageno) <= 1) ? 1 : parseInt(subpageno) - 1;
+    let prevSubPage = pageno + "-" + subpageDown;
+    let nextSubPage = pageno + "-" + subpageUp;
+    let pageLinksArray = [prevPage, nextPage, prevSubPage, nextSubPage];
+    //console.log(pageLinksArray)
+    return pageLinksArray;
 }
 const makeRequestFromNOS = async (page) => {
     //let url = 'https://teletekst-data.nos.nl/json/' + page;
@@ -374,31 +398,41 @@ const makeRequestFromOmroepWest = async (page) => {
     console.log("start omroep west 1")
     let pageImage = translatePageToPng(page);
     let url = "https://storage-w.rgcdn.nl/teletext/" + pageImage;
-    return {"image": await Jimp.read(url), "page": page};
+    return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+    }), "page": page};
 }
 const makeRequestFromOmroepGelderland = async (page) => {
     console.log("start omroep gelderland 1")
     let pageImage = translatePageToPng(page);
     let url = "https://storage-gelderland.rgcdn.nl/teletext/" + pageImage;
-    return {"image": await Jimp.read(url), "page": page};
+    return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+    }), "page": page};
 }
 const makeRequestFromOmroepLimburg = async (page) => {
     console.log("start omroep Limburg 1")
     let pageImage = translatePageToPng(page);
     let url = "http://vps01.l1.nl/teletext/L1/png/" + pageImage;
-    return {"image": await Jimp.read(url), "page": page};
+    return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+    }), "page": page};
 }
 const makeRequestFromOmroepBrabant = async (page) => {
     console.log("start omroep brabant 1", page)
     let pageImage = translatePageToPng2(page);
     let url = "https://storage-brabant.rgcdn.nl/teletext/" + pageImage;
-    return {"image": await Jimp.read(url), "page": page};
+    return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+    }), "page": page};
 }
 const makeRequestFromRTVOost= async (page) => {
     console.log("start RTV Oost", page)
     let pageImage = translatePageToPng3(page);
     let url = "https://teletekst.rtvoost.nl/teletekst/" + pageImage;
-    return {"image": await Jimp.read(url), "page": page};
+    return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+    }), "page": page};
 }
 const makeRequest = async (provider, page) => {
     if (provider == 0 || provider == "0") { 
