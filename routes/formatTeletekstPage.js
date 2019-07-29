@@ -125,13 +125,14 @@ function formatTTPage(ttpage, page, provider, userAgent) {
    <span> <label>Aanbieder</label>\
     <select class="page-input-select" name="provider" id="provider" onchange="changeProvider()">\
       <option value="0" ' +  setSelectedOption(provider, "0") + '>NOS Teletekst</option> \
-      <option value="1" ' +  setSelectedOption(provider, "1") + '>Rijnmond Tekst</option> \
+      <option value="1" ' +  setSelectedOption(provider, "1") + '>TV Rijnmond Tekst</option> \
       <option value="2" ' +  setSelectedOption(provider, "2") + '>InfoThuis</option> \
       <option value="3" ' +  setSelectedOption(provider, "3") + '>Omroep West</option> \
       <option value="4" ' +  setSelectedOption(provider, "4") + '>Omroep Gelderland</option> \
       <option value="5" ' +  setSelectedOption(provider, "5") + '>Omroep L1mburg</option> \
       <option value="6" ' +  setSelectedOption(provider, "6") + '>Omroep Brabant</option> \
       <option value="7" ' +  setSelectedOption(provider, "7") + '>RTV Oost</option> \
+      <option value="8" ' +  setSelectedOption(provider, "8") + '>RTV Drenthe</option> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);

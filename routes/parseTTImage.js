@@ -6,6 +6,8 @@ const nChrs = 40;
 module.exports = function (img) {
 return new Promise ((resolve, reject) => {
   var page = img.page;
+  var debug = (typeof img.debug !== 'undefined') ? img.debug : 0;
+  var provider = (typeof img.provider !== 'undefined') ? img.provider : 0;
   if (img.image.success) {
       var image = img.image.data; 
       var text = "";
@@ -16,16 +18,33 @@ return new Promise ((resolve, reject) => {
       var nLines = 1;
       switch (imgHeight) {
         case 300: nLines = 25;
-                  listChars = hashMap.listBlock12;
-                  listDoubleChars = hashMap.listBlock24;
+                  if (provider == 8) { // RTV Drenthe is generated from GIF image
+                    listChars = hashMap.listBlock12G;
+                    listDoubleChars = hashMap.listBlock24G;
+                    if (debug>0) {
+                      console.log("Use listBlock12G/24G");
+                    }
+                  } else {
+                    listChars = hashMap.listBlock12;
+                    listDoubleChars = hashMap.listBlock24;
+                    if (debug>0) {
+                      console.log("Use listBlock12/24");
+                    }
+                  }
                   break;
         case 336: nLines = 24;
                   listChars = hashMap.listBlock14;
                   listDoubleChars = hashMap.listBlock28;
+                  if (debug>0) {
+                    console.log("Use listBlock14/28");
+                  }
                   break;
         case 345: nLines = 23;
                   listChars = hashMap.listBlock15;
                   listDoubleChars = hashMap.listBlock30;
+                  if (debug>0) {
+                    console.log("Use listBlock15/30");
+                  }
                   break;
       }
       const skipBlock = [ nLines * nChrs];
@@ -120,7 +139,24 @@ return new Promise ((resolve, reject) => {
                 let hash2 =  crc32( blockByteMap.join(" ") );
                 let hashMatch2 = getDoubleCharByHash(hash2);
                 if (!hashMatch2.length) {
-                  char = ' ';
+                  if (debug == 0) {
+                    char = ' ';
+                  } else {
+                    if (debug == 1) {
+                      let imgBlock = image.clone();
+                      imgBlock.crop(i*w,  j*h, w , h );
+                      imgBlock.write("../../dump/" + j + "-" + i + "_Sblock.png");
+                      console.log( j + "-" + i + "_Sblock.png,\t{ \"hash\": \"" + hash + "\", \"char\": \"==\" },");
+                    }
+                    if (debug == 2) {
+                      let imgBlock2 = image.clone();
+                      imgBlock2.crop(i*w,  j*h, w , 2*h );
+                      imgBlock2.write("../../dump/" + j + "-" + i + "_Dblock.png");
+                      console.log( j + "-" + i + "_Dblock.png,\t{ \"hash\": \"" + hash2 + "\", \"char\": \"==\" },");
+                    }
+                    char = '=';
+                  }
+                  //char = ' ';
                 } else {
                   char = hashMatch2[0].char;
                   skipBlock[(j+1)*nChrs +i] = 1;

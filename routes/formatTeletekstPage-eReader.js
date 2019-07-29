@@ -131,6 +131,7 @@ function formatTTPage(ttpage, page, provider) {
       <option value="5" ' +  setSelectedOption(provider, "5") + '>Omroep L1mburg</option> \
       <option value="6" ' +  setSelectedOption(provider, "6") + '>Omroep Brabant</option> \
       <option value="7" ' +  setSelectedOption(provider, "7") + '>RTV Oost</option> \
+      <option value="8" ' +  setSelectedOption(provider, "8") + '>RTV Drenthe</option> \
     </select> </span>\
     </form>'
     //console.log("Form=", form);

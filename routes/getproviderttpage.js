@@ -4,6 +4,8 @@
 // pages.
 const got = require('got');
 var Jimp = require('jimp');
+const fetch = require('node-fetch'); // Added for RTV Drenthe
+const sharp = require('sharp'); // Added for RTV Drenthe
 // const p = require('phin');
 const parseTTImage = require('../routes/parseTTImage');
 const striptags = require('striptags');
@@ -58,6 +60,7 @@ const pageNotFoundTimeOut = "     Oeps, er ging iets verkeerd... \n\
 "+"  ( '._)  '._)  '._)(_,'  (_,'  ( ,' )\n\
 "+" \n\
 " + "    nieuws   weer   sport   voetbal ";
+const debug = 0;
 const errorPage = err => {
     { 
         if (err.statusCode == 404) {
@@ -294,6 +297,19 @@ function pageJsonRTVOostBuilder(ttext, page) {
     };
     return pageJson;
 }
+function pageJsonRTVDrentheBuilder(ttext, page) {
+    console.log("make RTV Drenthe    json", page)
+    let pageLinksArray = createFastTextLinks(page);
+    pageJson = { 
+        "prevPage": pageLinksArray[0],
+        "nextPage": pageLinksArray[1],
+        "prevSubPage": pageLinksArray[2],
+        "nextSubPage": pageLinksArray[3],
+        "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"150"},{"title":"sport","page":"601"},{"title":"programma's","page":"200"}],
+        "pagetxt": ttext
+    };
+    return pageJson;
+}
 function createFastTextLinks(page) {
     let pageno = page.substr(0,3);
     let prevPage = (parseInt(pageno) <= 101) ? "100" : parseInt(pageno) - 1;
@@ -394,13 +410,31 @@ function translatePageToPng3(page) {
     // console.log("subpage:",subpageOW);
     return subpageOW + ".png"
 }
+// Translate page index to gif for Drenthe
+function translatePageToGif(page) {
+    let pageno = page.substr(0,3);
+    let subpageOB = pageno + "-";
+    if (page.indexOf("-") == 3) {
+        let subpageno = page.substring(4,page.length);
+        
+        if (parseInt(subpageno) < 10) {
+            subpageOB += "0" + subpageno
+        } else {
+            subpageOB += subpageno
+        }
+    } else {
+        subpageOB += "01";
+    }
+    console.log("Drenthe, pagina = ", subpageOB);
+    return subpageOB + ".gif"
+}
 const makeRequestFromOmroepWest = async (page) => {
     console.log("start omroep west 1")
     let pageImage = translatePageToPng(page);
     let url = "https://storage-w.rgcdn.nl/teletext/" + pageImage;
     return {"image": await Jimp.read(url).then(image => {return {"data": image, "success": true, "errtext":""}}).catch(err => {
         return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
-    }), "page": page};
+    }), "page": page, "debug": 0};
 }
 const makeRequestFromOmroepGelderland = async (page) => {
     console.log("start omroep gelderland 1")
@@ -434,6 +468,25 @@ const makeRequestFromRTVOost= async (page) => {
         return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
     }), "page": page};
 }
+const makeRequestFromRTVDrenthe = async (page, provider, debug) => {
+    var debug = (typeof debug !== 'undefined') ? debug : 0;
+    let pageGif = translatePageToGif(page);
+    let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/" + pageGif;
+    return {"image": await fetch(url)
+      .then(res => res.buffer())
+      .then(buffer =>  sharp(buffer)
+      .png()
+      .toBuffer()
+      .then(buffer => Jimp.read(buffer)
+      .then(image => {
+        return  {"data": image, "success": true, "errtext":""}
+      }))
+      .catch(err => {
+        return {"data": 0, "success": false, "errtext": pageNotFound.replace("xxx",page)}
+      })
+     )
+    , "page": page, "provider": provider, "debug": debug};
+  }
 const makeRequest = async (provider, page) => {
     if (provider == 0 || provider == "0") { 
         return await makeRequestFromNOS(page).then(response => pageJsonNOSBuilder(response.body)
@@ -450,31 +503,47 @@ const makeRequest = async (provider, page) => {
                     return pageJson;
                 } else {
                     console.log(error.statusCode);
-                    //res.status(500);
                 }
          }
         );
     };
     if (provider == 1 || provider == "1") {
-        return await makeRequestFromRijnmond(page).then(response => pageJsonRijnmondBuilder(response.body), errorPage);
+        return await makeRequestFromRijnmond(page)
+        .then(response => pageJsonRijnmondBuilder(response.body), errorPage);
     };
     if (provider == 2 || provider == "2") {
-        return await makeRequestFromInfoThuis(page).then(response => pageJsonInfoThuisBuilder(response.body), errorPage);
+        return await makeRequestFromInfoThuis(page)
+        .then(response => pageJsonInfoThuisBuilder(response.body), errorPage);
     };
     if (provider == 3 || provider == "3") {
-        return await makeRequestFromOmroepWest(page).then(response => parseTTImage(response), errorPageTimeOut).then(response => pageJsonOmroepWestBuilder(response.ttext, response.page), errorPageTimeOut);
+        return await makeRequestFromOmroepWest(page)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonOmroepWestBuilder(response.ttext, response.page), errorPageTimeOut);
     };
     if (provider == 4 || provider == "4") {
-        return await makeRequestFromOmroepGelderland(page).then(response => parseTTImage(response), errorPageTimeOut).then(response => pageJsonOmroepGelderlandBuilder(response.ttext, response.page), errorPageTimeOut);
+        return await makeRequestFromOmroepGelderland(page)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonOmroepGelderlandBuilder(response.ttext, response.page), errorPageTimeOut);
     };
     if (provider == 5 || provider == "5") {
-        return await makeRequestFromOmroepLimburg(page).then(response => parseTTImage(response), errorPageTimeOut).then(response => pageJsonOmroepLimburgBuilder(response.ttext, response.page), errorPageTimeOut);
+        return await makeRequestFromOmroepLimburg(page)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonOmroepLimburgBuilder(response.ttext, response.page), errorPageTimeOut);
     };
     if (provider == 6 || provider == "6") {
-        return await makeRequestFromOmroepBrabant(page).then(response => parseTTImage(response), errorPageTimeOut).then(response => pageJsonOmroepBrabantBuilder(response.ttext, response.page), errorPageTimeOut);
+        return await makeRequestFromOmroepBrabant(page)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonOmroepBrabantBuilder(response.ttext, response.page), errorPageTimeOut);
     };
     if (provider == 7 || provider == "7") {
-        return await makeRequestFromRTVOost(page).then(response => parseTTImage(response), errorPageTimeOut).then(response => pageJsonRTVOostBuilder(response.ttext,response.page), errorPageTimeOut(404));
+        return await makeRequestFromRTVOost(page)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonRTVOostBuilder(response.ttext,response.page), errorPageTimeOut(404));
+    };
+    if (provider == 8 || provider == "8") {
+        return await makeRequestFromRTVDrenthe(page, provider, debug)
+        .then(response => parseTTImage(response), errorPageTimeOut)
+        .then(response => pageJsonRTVDrentheBuilder(response.ttext,response.page), errorPageTimeOut(404));
     };
 };
 module.exports = function (req, res, next) {
