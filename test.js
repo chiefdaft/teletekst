@@ -3,6 +3,8 @@
 // links. These can be used for buttons to navigate to different
 // pages.
 const got = require('got');
+//const p = require('phin');
+
 const striptags = require('striptags');
 
 function cleanUpNOSTTBody(ttpage) {
@@ -41,10 +43,14 @@ function pageJsonRijnmondBuilder ( ttpage ) {
 return pageJson;
 }
 const makeRequestFromNOS = async (page) => {
-	return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+  //let url = 'https://teletekst-data.nos.nl/json/' + page;
+  return await got(page, {baseUrl: 'https://teletekst-data.nos.nl/json/'});
+  //return await p({'url': url});
 }
 const makeRequestFromRijnmond = async (page) => {
-	return await got('?pagina=129&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+  //let url = 'https://rijnmond-ttw.itnm.nl/' + '?pagina=' + page + '&weergave=txt';
+  return await got('?pagina=129&weergave=txt', {baseUrl: 'https://rijnmond-ttw.itnm.nl/'});
+  //return await p(url);
 }
 // const makeRequest = async (res, req, next) => {
 const makeRequest = async (provider, page) => {
@@ -56,5 +62,5 @@ const makeRequest = async (provider, page) => {
 			return await makeRequestFromRijnmond(page).then(response => pageJsonRijnmondBuilder(response.body));
 		};
 	}
-makeRequest("0", "102").then(response => console.log(JSON.stringify(response)));
+makeRequest("1", "103").then(response => console.log(JSON.stringify(response)));
 
