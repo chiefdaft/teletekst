@@ -99,7 +99,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                </span> \
                </div>\
                ' + changeProviderScript() + ' \
-               ' + changePageBySlideScript() + '\
+               ' + changePageBySlideScript(ttpage,provider) + '\
                </body></html>';  
         return str;
       }
@@ -169,7 +169,7 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     //console.log("pageNavButtons XXX!!", ttpage.nextPage);
     return pagelinks.reduce(buttonList2Builder, "") ;
   }
-  function changePageBySlideScript() {
+  function changePageBySlideScript(ttpage,provider) {
     let scr = "<script>\
       function swipedetect(el, callback){\
       var touchsurface = el,\
@@ -218,19 +218,18 @@ function formatTTPage(ttpage, page, provider, userAgent) {
   swipedetect(el, function(swipedir){ \
       console.log('Detected swipe on ', el, swipedir);\
       if (swipedir != 'none') {\
-      let page = parseInt(document.getElementById('pagenumber').value);\
-      let subpage = parseInt(document.getElementById('subpagenumber').value);\
+      let pageValue = '100';\
       switch (swipedir) {\
-        case 'left': document.getElementById('pagenumber').value = (page < 899) ? page + 1 : page;\
-                    break;\
-        case 'right': document.getElementById('pagenumber').value = (page > 100) ? page - 1 : page ;\
-                    break;\
-        case 'up': document.getElementById('subpagenumber').value = subpage  + 1;\
-                    break;\
-        case 'down': document.getElementById('subpagenumber').value = (subpage > 1) ? subpage - 1 : subpage ;\
-                    break;\
+        case 'left':  pageValue = '" + ttpage.nextPage + "';\
+                      break;\
+        case 'right': pageValue = '" + ttpage.prevPage + "';\
+                      break;\
+        case 'up':    pageValue = '" + ttpage.nextSubPage + "';\
+                      break;\
+        case 'down':  pageValue = '" + ttpage.prevSubPage + "';\
+                      break;\
       }\
-      document.getElementById(\"select-page-form\").submit();\
+      window.location.href= '/tt/\' + pageValue + \'/" + provider + "\';\
     }\
   });\
   </script>"
