@@ -1,8 +1,14 @@
+const Cookies = require('cookies');
+
 module.exports = function(req, res)  {
     try {
       let userAgent = req.headers["user-agent"];
       let provider = req.body.provider;
-      res.send(formatTTPage(req.body.textpageobject, req.body.page, provider, userAgent));
+      let devType = deviceType(userAgent);
+      var cookies = new Cookies(req, res, { keys: "fontsize" })
+      var fontSize = cookies.get('fontsize');
+      console.log("fontSize should be:", fontSize);
+      res.send(formatTTPage(req.body.textpageobject, req.body.page, provider, devType, fontSize));
     } catch (error) {
       console.log("ERROR : ",error.response);
       res.send({"error": "1", "pagetxt" : "pagenotfound"});
@@ -17,7 +23,7 @@ function changeProviderScript () {
   // console.log(src)
   return src;
 }
-function formatTTPage(ttpage, page, provider, userAgent) {
+function formatTTPage(ttpage, page, provider, devType, fontSize) {
     let str = ttpage.pagetxt;
     let links = ttpage.fastTextLinks;
     let newstr = "";
@@ -80,11 +86,12 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     str = str.replace(ref,"<br>");
     // replace whitespaces by no-breaking whitespace
     // str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
-    str = '<html><header> \
+    str = '<html lang="nl"><head> \
     <meta name="viewport" content="width=device-width, initial-scale=1"> \
-           ' + style(userAgent) + '\
+           ' + style(devType) + '\
            <title>Minimalist Teletekst Display</title>\
-            </header><body><div class="content"><pre><p class="firstline">&nbsp \
+            ' + addPreStyleDesktopScript(devType, fontSize) + '\
+             </head><body><div class="content"><pre id="pre"><p class="firstline">&nbsp \
             ' + str + '\
             </p></div></pre>\
             <span class=\"spanboxes\"><div class=\"buttonbox\"> \
@@ -96,11 +103,20 @@ function formatTTPage(ttpage, page, provider, userAgent) {
                   <div class=\"navigationbox2\"> \
                   ' + pageNavButtons(ttpage, provider) + '\
                   </div> \
+                  <div class=\"navigationbox3\" id=\"sliderBox\"> \
+                  <input type="range" min="6" max="32" value="14" class="slider" id="myRange">\
+                  </div>\
                </span> \
                </div>\
-               ' + changeProviderScript() + ' \
-               ' + changePageBySlideScript(ttpage,provider) + '\
-               </body></html>';  
+               ' + changeProviderScript() + '\
+               ';
+
+          if (devType == 'desktop') {
+            str +=  changePageBySlideScript(ttpage,provider) + '\
+              ' + adjustTextSizeScript() + '\
+              '; 
+          }
+            str += '</body></html>';  
         return str;
       }
   //});
@@ -145,11 +161,18 @@ function formatTTPage(ttpage, page, provider, userAgent) {
     }
     return subpage;
   }
-  function style(userAgent) {
+  function deviceType(userAgent) {
     // device detection
-    //console.log("UserAgent=",userAgent);
-    let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+    let type = 'desktop';
     if(userAgent.search(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i) > -1) {
+      type = 'mobile';
+    }
+    return type;  
+  }
+  function style(devType) {
+    // device detection
+    let style = '<link rel="stylesheet" href="/stylesheets/style.css">';
+    if(devType == 'mobile') {
       style = '<link rel="stylesheet" href="/stylesheets/style.mobile.css">';
     }
     //console.log("Style = ", style);
@@ -234,5 +257,30 @@ function formatTTPage(ttpage, page, provider, userAgent) {
   });\
   </script>"
   
+    return scr;
+  }
+  function adjustTextSizeScript() {
+    let scr = "<script>\
+      var slider = document.getElementById(\"myRange\");\
+      var text = document.getElementById(\"pre\");\
+      slider.oninput = function() {\
+        text.style.fontSize = this.value + 'px';\
+        text.style.width = parseInt(352 + (this.value - 14) * 24) + 'px';\
+        document.cookie = \"fontsize=\" + this.value + \"; expires=Fri, 01 Jul 2022 12:00:00 UTC; path=/tt/\"; \
+      }\
+      </script>";
+    return scr;
+  }
+  function addPreStyleDesktopScript(devType, fontSize) {
+    let scr = "";
+    if (devType == 'desktop') {
+      scr = '<style>\
+          pre {\
+            width: ' + parseInt(352 + ( fontSize  - 14) * 24) + 'px;\
+            font-size:' + fontSize + 'px;\
+          }\
+        </style>\
+        ';
+    }
     return scr;
   }

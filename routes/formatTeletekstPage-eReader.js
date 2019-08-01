@@ -80,7 +80,7 @@ function formatTTPage(ttpage, page, provider) {
     str = str.replace(ref,"<br>");
     // replace whitespaces by no-breaking whitespace
     // str = str.replace(/[ ]{2}/g, "&nbsp;&nbsp;");
-    str = '<html><header> \
+    str = '<html lang="nl"><header> \
     <meta name="viewport" content="width=device-width, initial-scale=1"> \
            ' + style() + '\
            <title>Minimalist Teletekst Display</title\

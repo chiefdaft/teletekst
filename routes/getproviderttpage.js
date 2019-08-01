@@ -498,7 +498,7 @@ const makeRequest = async (provider, page) => {
                         "prevSubPage": "1",
                         "nextSubPage": "1",
                         "fastTextLinks": [{"title":"nieuws","page":"101"},{"title":"weer","page":"700"},{"title":"sport","page":"600"},{"title":"voetbal","page":"800"}],
-                        "pagetxt": pageNotFound //.replace("xxxxx", page)
+                        "pagetxt": pageNotFound.replace("xxx", page)
                     };
                     return pageJson;
                 } else {

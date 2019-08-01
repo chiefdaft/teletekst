@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
+    "cookies": "^0.7.3",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
@@ -15,6 +16,7 @@
     "http-errors": "~1.6.3",
     "jimp": "^0.6.4",
     "morgan": "~1.9.1",
+    "mpm": "0.0.1",
     "node-fetch": "^2.6.0",
     "npm": "^6.10.2",
     "phin": "^3.4.0",

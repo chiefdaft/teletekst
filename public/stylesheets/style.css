@@ -3,6 +3,7 @@
   --main-box-border-color: rgb(141, 156, 154);
   --main-text-color: rgb(155, 255, 0);
   --body-bg-color: whitesmoke;
+  --main-col-width: 96px;
 }
 
 body { 
@@ -11,7 +12,7 @@ body {
   background-color: var(--body-bg-color);
 }
 .content {
-  max-width: 600px;
+  max-width: 420px;
   margin: auto;
 }
 .spanboxes {
@@ -34,11 +35,12 @@ pre {
   right: 100px;
   text-indent: 0px;
   background-color: var(--main-box-bg-color);
-  width: 400px;
+ 
   border: 10px solid var(--main-box-border-color);
   padding: 10px;
   margin: 10px;
 }
+
 /* div { 
   background-color: var(--main-box-bg-color);
   /*width: 332px;*/
@@ -53,7 +55,7 @@ pre {
   border: 10px solid var(--main-box-border-color);
   padding: 10px;
   margin: auto;
-  width: 96px;
+  width: var(--main-col-width);
   position: relative;
   top: 0px; 
   border-bottom: 5px;
@@ -65,7 +67,7 @@ pre {
   border: 10px solid var(--main-box-border-color);
   padding: 10px;
   margin: auto;
-  width: 96px;
+  width: var(--main-col-width);
   position: relative;
   border-bottom: 0px;
 } 
@@ -75,20 +77,34 @@ pre {
   border: 10px solid var(--main-box-border-color);
   padding: 10px;
   margin: auto;
-  width: 96px;
+  width: var(--main-col-width);
   position: relative;
+  border-bottom: 0px;
 } 
+.navigationbox3{ 
+  background-color: var(--main-box-bg-color);
+  /*width: 332px;*/
+  border: 10px solid var(--main-box-border-color);
+  padding: 10px;
+  margin: auto;
+  width: var(--main-col-width);
+  position: relative;
+  display: block;
+} 
+.sliderBox {
+  display: block;
+}
 p { 
   color: var(--main-text-color); 
   margin: 1px; 
   border: none; 
   padding: 0px;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace; 
-  font-size: 16px; 
+  
   font-style: normal; 
   font-variant: normal; 
   font-weight: 400; 
-  line-height: 18px; 
+  
 } 
 p:empty {
     height: 0.5; 
@@ -107,7 +123,7 @@ a:visited {
 }
 label {
   background-color: var(--main-box-bg-color);
-  width: 96px;
+  width: var(--main-col-width);
   color: white; 
   margin: 1px; border: none; padding: 0px;
   font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
@@ -123,7 +139,7 @@ button {
   height: 25px;
 }
 .page-input {
-  width: 96px;
+  width: var(--main-col-width);
   background: Gray;
   color: White;
   border: 1px;
@@ -139,16 +155,46 @@ button {
   display: none;
 }
 .page-submit {
-  width: 96px;
+  width: var(--main-col-width);
   font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 .page-input-select {
-  width: 96px;
+  width: var(--main-col-width);
   height: 25px;
 }
 .select-page-form {
   margin: auto;
 }
 .navbutton {
-  width: 96px;
+  width: var(--main-col-width);
+}
+.slider {
+  -webkit-appearance: none;
+  width: var(--main-col-width);
+  height: 2px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 24px;
+  background: var(--main-text-color);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 12px;
+  height: 24px;
+  background: var(--main-text-color);
+  cursor: pointer;
 }

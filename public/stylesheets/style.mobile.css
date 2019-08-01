@@ -71,7 +71,13 @@ pre {
   padding: 1px;
   position: relative;
   text-align: center;
+}
+.navigationbox3 { 
+  display: none;
 } 
+.sliderBox {
+  display: none;
+}
 p { 
   color: var(--main-text-color); 
   margin: 4px; border: none; padding: 0px;
