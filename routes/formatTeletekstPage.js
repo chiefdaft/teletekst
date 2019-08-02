@@ -112,9 +112,11 @@ function formatTTPage(ttpage, page, provider, devType, fontSize) {
                ';
 
           if (devType == 'desktop') {
-            str +=  changePageBySlideScript(ttpage,provider) + '\
-              ' + adjustTextSizeScript() + '\
+            str += adjustTextSizeScript() + '\
               '; 
+          } else {
+            str += changePageBySlideScript(ttpage,provider) + '\
+            ';
           }
             str += '</body></html>';  
         return str;
