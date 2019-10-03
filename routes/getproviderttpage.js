@@ -6,7 +6,6 @@ const got = require('got');
 var Jimp = require('jimp');
 const fetch = require('node-fetch'); // Added for RTV Drenthe
 const sharp = require('sharp'); // Added for RTV Drenthe
-// const p = require('phin');
 const parseTTImage = require('../routes/parseTTImage');
 const striptags = require('striptags');
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
