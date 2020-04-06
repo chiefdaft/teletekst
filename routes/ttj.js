@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-var striptags = require('striptags');
-const got = require('got');
+//var striptags = require('striptags');
+//const got = require('got');
 
 const getprovider = require('./getproviderandpagefrompost');
 const getproviderpage = require('./getproviderttpage');

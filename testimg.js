@@ -23,8 +23,8 @@ let url = "https://teletekst.rtvoost.nl/teletekst/110.png";
 
 
 
-const fs = require('fs');
-const got = require('got');
+//const fs = require('fs');
+//const got = require('got');
 ////const sharp = require('sharp');
 var Jimp = require('jimp');
 const hashMap = require('./routes/json/hashmap.json');
