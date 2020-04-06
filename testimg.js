@@ -1,5 +1,28 @@
 
 
+// //---------------------------------------------------------------------- \\
+// ||- set the url for the image file taht must be retrieved and de-hashed  ||
+// \\---------------------------------------------------------------------- //
+
+// -------- RTV Oost
+let url = "https://teletekst.rtvoost.nl/teletekst/110.png";
+// let url = "https://teletekst.rtvoost.nl/teletekst/101.png"; // h = 345
+// -------- RTV Drenthe
+// let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/102-01.gif";
+// -------- Omroep Brabant
+// let url = "https://storage-brabant.rgcdn.nl/teletext/123_0001.png"; //480 × 336 pixels (12/24)
+// -------- Omroep West
+//let url = "https://storage-w.rgcdn.nl/teletext/" + "109s00.png";
+// let url = "https://storage-w.rgcdn.nl/teletext/104s00.png";
+// -------- Omroep Limburg L1
+//let url = "http://vps01.l1.nl/teletext/L1/png/603s00.png";
+// -------- Omroep Gelderland
+// let url = "https://storage-gelderland.rgcdn.nl/teletext/121s00.png";
+// -------- Local teletext image
+//let url = "http://localhost/GIFE0D2.tmp.gif";
+
+
+
 const fs = require('fs');
 const got = require('got');
 ////const sharp = require('sharp');
@@ -7,15 +30,6 @@ var Jimp = require('jimp');
 const hashMap = require('./routes/json/hashmap.json');
 
 const nChrs = 40; 
-
-//let url = "https://teletekst.rtvoost.nl/teletekst/100.png";
-let url = "https://teletekst.rtvdrenthe.nl/Output/gif2/images/102-01.gif";
-// let url = "https://storage-brabant.rgcdn.nl/teletext/104_0001.png"; //480 × 336 pixels (12/24)
-// let url = "https://storage-w.rgcdn.nl/teletext/104s00.png";
-// let url = "http://vps01.l1.nl/teletext/L1/png/192s00.png";
-// let url = "https://storage-gelderland.rgcdn.nl/teletext/121s00.png";
-//let url = "http://localhost/GIFE0D2.tmp.gif";
-// let url = "https://teletekst.rtvoost.nl/teletekst/101.png"; // h = 345
 const debug = 2;
 Jimp.read(url, function (err, image) {
   var text = "";

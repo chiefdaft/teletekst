@@ -10,7 +10,7 @@ const diacriticals = require('./json/diacriticals.json');
 router.use('/',getprovider, getproviderpage);
 
 router.post('/', function(req, res, next) {
-  //console.log(JSON.stringify(req.headers));
+  console.log(JSON.stringify(req.headers));
     try {
       let pageJson = req.body.textpageobject;
       pageJson["pagetxt"] = replaceDiacriticals(pageJson.pagetxt);
