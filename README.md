@@ -4,7 +4,7 @@ This is a NodeJS/Express based webpage that generates a text view of a Teletekst
 
 
 The data is extracted from a JSON file from https://nos.nl/teletekst webpage, or from a gif or png file.
-The result can be viewed at https://teletekst-display.herokuapp.com/tt.
+The result can be viewed at https://teletekst-display.herokuapp.com/tt. The image parsing of teletekst image pages is inspired on the php functions by https://github.com/rhuijben/tt-parser. 
 
 ## New local Teletext broadcaster
 Updated the rendering to JSON and teletext images from local broadcastting stations.
